@@ -11,66 +11,70 @@ set(
 
 
 set(
-		AVM_LEXER_OUTPUT
-		"${CMAKE_CURRENT_BINARY_DIR}/AVMLexer.ll.cpp"
+		LEXER_OUTPUT
+		"${CMAKE_CURRENT_BINARY_DIR}/Lexer.ll.cpp"
 )
 
 set(
-		AVM_LEXER_FILE
-		${CMAKE_CURRENT_SOURCE_DIR}/AVMLexer.l
+		LEXER_FILE
+		${CMAKE_CURRENT_SOURCE_DIR}/Lexer.flex
 )
 
-### flex target ####
-add_custom_command(OUTPUT ${AVM_LEXER_OUTPUT}
-		COMMAND lex -o ${AVM_LEXER_OUTPUT}  ${AVM_LEXER_FILE}
+### lex target ####
+add_custom_command(OUTPUT ${LEXER_OUTPUT}
+		COMMAND lex -o ${LEXER_OUTPUT}  ${LEXER_FILE}
 		# make it compatible with c++17 :)
-		COMMAND sed -i "" -- "s/register//g" ${AVM_LEXER_OUTPUT}
-		DEPENDS ${AVM_LEXER_FILE}
+		COMMAND sed -i "" -- "s/register//g" ${LEXER_OUTPUT}
+		DEPENDS ${LEXER_FILE}
 		COMMENT "generating lexer"
 		VERBATIM
 		)
-add_custom_target(generateAVMScanner DEPENDS ${AVM_LEXER_OUTPUT} VERBATIM)
+
+add_custom_target(lexer DEPENDS ${LEXER_OUTPUT} VERBATIM)
+
 ####################
 set(
-		AVM_PARSER_SOURCE_FILE
-		"${CMAKE_CURRENT_BINARY_DIR}/AVMParser.yy.cpp"
+		PARSER_SOURCE_FILE
+		"${CMAKE_CURRENT_BINARY_DIR}/Parser.yy.cpp"
 )
 set(
-		AVM_PARSER_FILE
-		${CMAKE_CURRENT_SOURCE_DIR}/AVMGrammar.y
+		PARSER_FILE
+		${CMAKE_CURRENT_SOURCE_DIR}/Grammar.y
 )
 ### yacc target ###
-add_custom_command(OUTPUT ${AVM_PARSER_SOURCE_FILE}
-		COMMAND yacc -d -o ${AVM_PARSER_SOURCE_FILE} ${AVM_PARSER_FILE}
-		DEPENDS "${AVM_PARSER_FILE}"
+add_custom_command(OUTPUT ${PARSER_SOURCE_FILE}
+		COMMAND yacc -d -o ${PARSER_SOURCE_FILE} ${PARSER_FILE}
+		DEPENDS "${PARSER_FILE}"
 		COMMENT "generating parser"
 		VERBATIM
 		)
 
 
-add_custom_target(generateAVMGrammar DEPENDS ${AVM_PARSER_SOURCE_FILE} VERBATIM)
+add_custom_target(parser DEPENDS ${PARSER_SOURCE_FILE} VERBATIM)
 ####################
 
 set(
 		FILES_GENERATED_PROPERTIES
-		${AVM_PARSER_SOURCE_FILE}
-		${AVM_LEXER_OUTPUT}
-		${CMAKE_CURRENT_BINARY_DIR}/AVMParser.yy.hpp
+		${PARSER_SOURCE_FILE}
+		${LEXER_OUTPUT}
+		${CMAKE_CURRENT_BINARY_DIR}/Parser.yy.hpp
 		PARENT_SCOPE
 )
 
 
-set(AVM_SOURCES ${AVM_SOURCES}
-		${CMAKE_CURRENT_BINARY_DIR}/AVMLexer.ll.cpp
-		${CMAKE_CURRENT_BINARY_DIR}/AVMParser.yy.cpp
+set(SOURCES ${AVM_SOURCES}
+		${CMAKE_CURRENT_BINARY_DIR}/Lexer.ll.cpp
+		${CMAKE_CURRENT_BINARY_DIR}/Parser.yy.cpp
 		PARENT_SCOPE)
 
 set(AVM_HEADERS ${AVM_HEADERS}
-		${CMAKE_CURRENT_SOURCE_DIR}/AVMLexer.h
-		${CMAKE_CURRENT_BINARY_DIR}/AVMParser.yy.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/Lexer.h
+		${CMAKE_CURRENT_BINARY_DIR}/Parser.yy.hpp
 		PARENT_SCOPE)
 
 
 
 add_custom_target(Grammar DEPENDS ${AVM_PARSER_SOURCE_FILE} VERBATIM)
-add_dependencies(Grammar generateAVMScanner)
+
+add_dependencies(parser lexer)
+add_dependencies(Grammar parser)

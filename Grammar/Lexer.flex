@@ -1,5 +1,5 @@
 %{
-#include "AVMParser.yy.hpp"
+#include "Parser.yy.hpp"
 #include <string>
 
 
@@ -26,7 +26,10 @@
 "<=>"							{ return EQU; }
 "("								{ return BROPEN; }
 ")"								{ return BRCLOSE; }
-[ABCDEFGHIJKLMNOPQRSTUVWXYZ]	{ return VAR; }
+[A-Z]							{
+									yylval.sIndex = *yytext;
+									return VAR;
+								}
 
 
 %%
@@ -35,3 +38,4 @@ int yywrap()
 {
 	return 1;
 }
+

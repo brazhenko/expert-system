@@ -10,7 +10,7 @@ add_custom_target(minilibx COMMAND make
 		)
 
 add_executable(${PROJECT_NAME} main.cpp
-		${CMAKE_CURRENT_BINARY_DIR}/Grammar/AVMLexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/AVMParser.yy.cpp )
+		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h)
 
 
 

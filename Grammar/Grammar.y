@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <exception>
+#include "../expertNode.h"
 
 extern int	yylex();
 extern int	yylineno;
@@ -29,17 +30,21 @@ void yyerror(const char *msg)
 %left IMPLIES
 %left AND
 %left OR
-%right NOT
+%nonassoc NOT
 %left XOR
 %left EQU
 %left VAR
 %left BROPEN
 %left BRCLOSE
 
+
 %union {
-	char *string;
-	struct yaccValue *val;
+	expertNodes::iExpertNode* Node;
+	char sIndex; /* symbol table index */
 }
+
+%token <sIndex> VAR
+%type <Node> EXPR
 
 
 %%
@@ -56,23 +61,28 @@ EXPR:
 	}
 	| EXPR IMPLIES EXPR
 	{
-
+		$$ = new expertNodes::Implication($1, $3);
+		std::cout << $$->to_string() << std::endl;
 	}
  	| EXPR XOR EXPR
  	{
-
+		$$ = new expertNodes::Xor($1, $3);
+		std::cout << $$->to_string() << std::endl;
  	}
 	| EXPR OR EXPR
 	{
-
+		$$ = new expertNodes::Or($1, $3);
+		std::cout << $$->to_string() << std::endl;
 	}
 	| EXPR AND EXPR
 	{
-
+		$$ = new expertNodes::And($1, $3);
+		std::cout << $$->to_string() << std::endl;
 	}
 	| NOT EXPR
 	{
-
+		$$ = new expertNodes::Not($2);
+		std::cout << $$->to_string() << std::endl;
 	}
 	| BROPEN EXPR BRCLOSE
 	{
@@ -80,7 +90,8 @@ EXPR:
 	}
 	| VAR
 	{
-
+		$$ = new expertNodes::Var($1);
+		std::cout << $$->to_string() << std::endl;
 	}
 	;
 
