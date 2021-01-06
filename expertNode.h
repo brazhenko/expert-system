@@ -15,15 +15,6 @@ namespace expertNodes {
 		Undefined
 	};
 
-	//"=>"							{ return IMPLIES; }
-	//"+"								{ return AND; }
-	//"|"								{ return OR; }
-	//"!"								{ return NOT; }
-	//"^"								{ return XOR; }
-	//"<=>"							{ return EQU; }
-	//"("								{ return BROPEN; }
-	//")"								{ return BRCLOSE; }
-
 	class iExpertNode {
 	public:
 		virtual Value eval() = 0;

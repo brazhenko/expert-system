@@ -57,7 +57,8 @@ S:
 EXPR:
 	EXPR EQU EXPR
 	{
-
+		$$ = new expertNodes::Equ($1, $3);
+		std::cout << $$->to_string() << std::endl;
 	}
 	| EXPR IMPLIES EXPR
 	{
@@ -86,7 +87,8 @@ EXPR:
 	}
 	| BROPEN EXPR BRCLOSE
 	{
-
+		$$ = $2;
+		std::cout << $$->to_string() << std::endl;
 	}
 	| VAR
 	{
