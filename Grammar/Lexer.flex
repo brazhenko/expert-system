@@ -1,10 +1,9 @@
 %{
+#include "../expertNode.h"
 #include "Parser.yy.hpp"
 #include <string>
 
 
-// std::string currentLine;
-// <<EOF>>     			{ printf("EOF \n"); return END_OF_FILE; }
 
 %}
 

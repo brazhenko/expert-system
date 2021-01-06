@@ -5,7 +5,7 @@
 #ifndef AVM_AVMLEXER_H
 #define AVM_AVMLEXER_H
 
-
+#include "../expertNode.h"
 
 
 #endif //AVM_AVMLEXER_H

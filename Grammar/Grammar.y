@@ -1,11 +1,13 @@
 %{
+
+#include "../expertNode.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <exception>
-#include "../expertNode.h"
+
 
 extern int	yylex();
 extern int	yylineno;
