@@ -9,9 +9,6 @@ add_custom_target(minilibx COMMAND make
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/minilibx_macos
 		)
 
-add_executable(${PROJECT_NAME} main.cpp
-		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h)
-
 
 
 #find_package(GLEW REQUIRED)
@@ -32,12 +29,54 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
+# <IMGUI>
+find_library (
+		GLFLIB REQUIRED
+		NAMES glfw3 libglfw3 glfw # what to look for
+		HINTS "/usr/local/lib/cmake" # where to look
+		#NO_DEFAULT_PATH # do not search system default paths
+)
 
-target_link_libraries(${PROJECT_NAME}
-		#		GLEW::GLEW
-#		${GLUT_LIBRARY}
-#		OpenCL::OpenCL
-		NumCpp::NumCpp
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+
+find_package(GLEW REQUIRED)
+if (GLEW_FOUND)
+	include_directories(${GLEW_INCLUDE_DIRS})
+	#link_libraries(${GLEW_LIBRARIES})
+endif()
+
+include_directories(imgui)
+include_directories(imgui/examples)
+include_directories(imgui/examples/libs/gl3w)
+include_directories(/usr/local/include)
+include_directories(/opt/local/include)
+include_directories(little_imgui)
+
+SET(IMGUI_SOURCES
+		little_imgui/imgui.cpp
+		little_imgui/imgui_draw.cpp
+		little_imgui/imgui_widgets.cpp
+
+		little_imgui/imgui_impl_opengl3.cpp
+		little_imgui/imgui_impl_opengl3.h
+		little_imgui/imgui_impl_glfw.cpp
+		little_imgui/imgui_impl_glfw.h
 		)
 
+# </IMGUI>
+
+
+
+
+add_executable(${PROJECT_NAME} main.cpp
+		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h
+		${IMGUI_SOURCES})
 add_dependencies(${PROJECT_NAME}  Grammar)
+
+target_link_libraries(${PROJECT_NAME}
+		${GLFLIB}
+		${OPENGL_LIBRARIES}
+		GLEW::GLEW
+		NumCpp::NumCpp
+		)
