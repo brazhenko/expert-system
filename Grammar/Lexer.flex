@@ -14,7 +14,7 @@
 %%
 
 "#".*							{ ; }
-[\n]+							{ return NL; }
+[\n]							{ return NL; }
 
 [\t\v\r\f ]+					{ ; }
 "=>"							{ return IMPLIES; }

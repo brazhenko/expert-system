@@ -30,10 +30,10 @@ find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # <IMGUI>
-find_library (
-		GLFLIB REQUIRED
-		NAMES glfw3 libglfw3 glfw # what to look for
-		HINTS "/usr/local/lib/cmake" # where to look
+find_package (
+		glfw3 REQUIRED
+#		NAMES glfw3 libglfw3 glfw # what to look for
+#		HINTS "/usr/local/lib/cmake" # where to look
 		#NO_DEFAULT_PATH # do not search system default paths
 )
 
@@ -62,7 +62,7 @@ SET(IMGUI_SOURCES
 		little_imgui/imgui_impl_opengl3.h
 		little_imgui/imgui_impl_glfw.cpp
 		little_imgui/imgui_impl_glfw.h
-		)
+        Interpreter.cpp Interpreter.h)
 
 # </IMGUI>
 
@@ -75,7 +75,7 @@ add_executable(${PROJECT_NAME} main.cpp
 add_dependencies(${PROJECT_NAME}  Grammar)
 
 target_link_libraries(${PROJECT_NAME}
-		${GLFLIB}
+		glfw
 		${OPENGL_LIBRARIES}
 		GLEW::GLEW
 		NumCpp::NumCpp

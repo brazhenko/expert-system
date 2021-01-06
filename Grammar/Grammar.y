@@ -26,22 +26,22 @@ void yyerror(const char *msg)
 %}
 
 %token N
-
 %token NL
 
-%left IMPLIES
-%left AND
-%left OR
-%nonassoc NOT
-%left XOR
 %left EQU
-%left VAR
+%left IMPLIES
+%left XOR
+
+%left OR
+%left AND
+%nonassoc NOT
 %left BROPEN
 %left BRCLOSE
+%left VAR
 
 
 %union {
-	expertNodes::iExpertNode* Node;
+	expert_system::iExpertNode* Node;
 	char sIndex; /* symbol table index */
 }
 
@@ -53,38 +53,47 @@ void yyerror(const char *msg)
 
 
 S:
-	| EXPR S
+	| NL S
+	| FULLEXPR S
 	;
+
+
+FULLEXPR:
+	EXPR NL
+	{
+		std::cout << "Expression done!" << std::endl;
+		std::cout << (int)expert_system::Value{} << std::endl;
+	}
 
 EXPR:
 	EXPR EQU EXPR
 	{
-		$$ = new expertNodes::Equ($1, $3);
+		$$ = new expert_system::Equ($1, $3);
 		std::cout << $$->to_string() << std::endl;
 	}
 	| EXPR IMPLIES EXPR
 	{
-		$$ = new expertNodes::Implication($1, $3);
+		$$ = new expert_system::Implication($1, $3);
 		std::cout << $$->to_string() << std::endl;
 	}
  	| EXPR XOR EXPR
  	{
-		$$ = new expertNodes::Xor($1, $3);
+		$$ = new expert_system::Xor($1, $3);
 		std::cout << $$->to_string() << std::endl;
  	}
 	| EXPR OR EXPR
 	{
-		$$ = new expertNodes::Or($1, $3);
+		$$ = new expert_system::Or($1, $3);
 		std::cout << $$->to_string() << std::endl;
 	}
 	| EXPR AND EXPR
 	{
-		$$ = new expertNodes::And($1, $3);
+		$$ = new expert_system::And($1, $3);
 		std::cout << $$->to_string() << std::endl;
 	}
 	| NOT EXPR
 	{
-		$$ = new expertNodes::Not($2);
+		$$ = new expert_system::Not($2);
 		std::cout << $$->to_string() << std::endl;
 	}
 	| BROPEN EXPR BRCLOSE
@@ -94,7 +103,7 @@ EXPR:
 	}
 	| VAR
 	{
-		$$ = new expertNodes::Var($1);
+		$$ = new expert_system::Var($1);
 		std::cout << $$->to_string() << std::endl;
 	}
 	;
