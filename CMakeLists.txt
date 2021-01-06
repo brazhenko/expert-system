@@ -62,7 +62,7 @@ SET(IMGUI_SOURCES
 		little_imgui/imgui_impl_opengl3.h
 		little_imgui/imgui_impl_glfw.cpp
 		little_imgui/imgui_impl_glfw.h
-		)
+        Interpreter.cpp Interpreter.h)
 
 # </IMGUI>
 

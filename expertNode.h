@@ -7,13 +7,17 @@
 
 #include <memory>
 
-namespace expertNodes {
+namespace expert_system {
 	enum class Value
 	{
 		False = 0,
 		True,
 		Undefined
 	};
+
+	Value getValueByVarName(char name);
+
+	void setVarByValue(char name, Value value);
 
 	class iExpertNode {
 	public:
