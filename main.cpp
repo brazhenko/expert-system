@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 int yyparse();
 extern FILE * yyin;
 
@@ -36,18 +35,58 @@ using namespace gl;
 #include <vector>
 #include <sstream>
 #include <iostream>
-
+#include <unistd.h>
 
 static void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+char *addString(char*name, int scoreString, std::vector<char*> &v) {
+
+	ImGui::Text("Put Rule %d", scoreString + 1);
+	ImGui::SameLine(120);
+	ImGui::InputText(name, v[scoreString], 100);
+}
+
+enum Mode
+{
+	True,
+	False,
+	Undefined
+};
+
+
+void addRadioButtonForVar(char*fact, int *e) {
+	std::vector<ImColor>	colorBoxes;
+
+	ImGui::Text("Choose value fact %s\n", fact);
+
+	std::stringstream  ss;
+	ss << "True " << fact;
+
+	std::stringstream  ss2;
+	ss2 << "False " << fact;
+
+	std::stringstream  ss3;
+	ss3 << "Undefined " << fact;
+
+	ImGui::RadioButton(ss.str().c_str(), e, True); ImGui::SameLine();
+	ImGui::RadioButton(ss2.str().c_str(), e, False); ImGui::SameLine();
+	ImGui::RadioButton(ss3.str().c_str(), e, Undefined);
+
+}
+
+class RadioButton {
+public:
+
+};
+
 int main(int ac, char **av) {
 	yyin = stdin;
 	yyparse();
 
-	bool gui = false;
+	bool gui = true;
 	if (gui)
 	{
 		// Setup window
@@ -64,7 +103,7 @@ int main(int ac, char **av) {
 
 
 		// Create window with graphics context
-		GLFWwindow* window = glfwCreateWindow(1280, 720, "AllocVisualizer", NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(1280, 720, "expert-system", NULL, NULL);
 		if (window == nullptr)
 			return 1;
 		glfwMakeContextCurrent(window);
@@ -101,19 +140,30 @@ int main(int ac, char **av) {
 		bool show_tiny_clusters = false, show_small_clusters = false, show_huge_clusters = false;
 
 
-		std::vector<ImColor>	colorBoxes;
+		int rows_count = 0;
+		int value_count = 0;
+		std::vector<char*> inputExpressions;
+		std::vector<char*> Facts;
+		std::vector<int> staticValueForFacts;
+		ImVec2 windowSizeValues;
+		ImVec2 windowSizeFormulas;
 
-		ImColor Cluster{0xFF, 0xFF, 0x00};
-		ImColor Block{0x33,0x30, 0x86};
-		ImColor FreeCell{0xC9, 0xF7, 0x6F};
-		ImColor Usedcell{0xFF, 0x45, 0x40};
+
 
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		std::stringstream archive;
 
+
+
 		// Main loop
+
 		while (!glfwWindowShouldClose(window))
 		{
+
+
+			std::vector<std::string> FACT_VECTOR {"Z","A","F","S","Q","W","E","R"};
+			int FACT_COUNT = FACT_VECTOR.size();
+
 			glfwPollEvents();
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
@@ -124,74 +174,115 @@ int main(int ac, char **av) {
 			{
 				static float f = 0.0f;
 				static int counter = 0;
-				ImGui::Begin("Service Panel");
+				ImGui::Begin("Rules");
 				static bool HWstart = false;
-				if (!HWstart)
+				if (!HWstart || rows_count)
 				{
 					HWstart = true;
-					ImGui::SetWindowSize({350, 300});
+					windowSizeFormulas.x = 450;
+					windowSizeFormulas.y = (float)(80 + 23 * rows_count);
+					ImGui::SetWindowSize(windowSizeFormulas);
 				}
 				// Config boxes
-				ImGui::Checkbox("memory Window", &show_memory_window);
-				ImGui::Checkbox("Tiny Clusters", &show_tiny_clusters);
-				ImGui::Checkbox("Small Clusters", &show_small_clusters);
-				ImGui::Checkbox("Huge Clusters", &show_huge_clusters);
 
-				if (ImGui::Button(">>"))
-				{
-					colorBoxes.clear();
-
+				for (int i = 0; i < rows_count; i++){
+					std::stringstream ss;
+					ss << i + 1;
+					std::string num = ss.str();
+					std::string str = "##Rule " + num;
+					char *cstr = new char[str.length() + 1];
+					strcpy(cstr, str.c_str());
+					addString(cstr ,i, inputExpressions);
+					delete [] cstr;
 				}
-				ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-				const ImVec2 p = ImGui::GetCursorScreenPos();
-				draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 20, p.y + 20), Cluster);
-				ImGui::Text("   Start of memory zone");
+				if(ImGui::Button ("PRESS TO ADD"))
+				{
+					rows_count++;
+					inputExpressions.emplace_back(new char[100]);
+				}
+				ImGui::SameLine(125);
+				if(ImGui::Button ("PRESS TO DELETE"))
+				{
+					if (rows_count > 0)
+					{
+						rows_count--;
+						delete[] inputExpressions.back();
+						inputExpressions.pop_back();
+					}
+				}
+				ImGui::SameLine(270);
+				if(ImGui::Button ("SET RULES"))
+				{
+					for (auto &el : inputExpressions)
+					{
+						std::cout << el <<std::endl;
+					}
+				}
 
-				const ImVec2 p1 = ImGui::GetCursorScreenPos();
-				draw_list->AddRectFilled(ImVec2(p1.x, p1.y), ImVec2(p1.x + 20, p1.y + 20), Block);
-				ImGui::Text("   Start of memory block");
 
-				const ImVec2 p2 = ImGui::GetCursorScreenPos();
-				draw_list->AddRectFilled(ImVec2(p2.x, p2.y), ImVec2(p2.x + 20, p2.y + 20), FreeCell);
-				ImGui::Text("   Free memory cells");
 
-				const ImVec2 p3 = ImGui::GetCursorScreenPos();
-				draw_list->AddRectFilled(ImVec2(p3.x, p3.y), ImVec2(p3.x + 20, p3.y + 20), Usedcell);
-				ImGui::Text("   Used memory cells");
 
-				ImGui::Text("\nApplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+//				ImGui::Checkbox("memory Window", &show_memory_window);
+//				ImGui::Checkbox("Tiny Clusters", &show_tiny_clusters);
+//				ImGui::Checkbox("Small Clusters", &show_small_clusters);
+//				ImGui::Checkbox("Huge Clusters", &show_huge_clusters);
+//				if (ImGui::Button(">>"))
+//				{
+//					colorBoxes.clear();
+//
+//				}
+//				ImDrawList* draw_list = ImGui::GetWindowDrawList();
+//
+//				const ImVec2 p = ImGui::GetCursorScreenPos();
+//				draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 20, p.y + 20), Cluster);
+//				ImGui::Text("   Start of memory zone");
+//
+//				const ImVec2 p1 = ImGui::GetCursorScreenPos();
+//				draw_list->AddRectFilled(ImVec2(p1.x, p1.y), ImVec2(p1.x + 20, p1.y + 20), Block);
+//				ImGui::Text("   Start of memory block");
+//
+//				const ImVec2 p2 = ImGui::GetCursorScreenPos();
+//				draw_list->AddRectFilled(ImVec2(p2.x, p2.y), ImVec2(p2.x + 20, p2.y + 20), FreeCell);
+//				ImGui::Text("   Free memory cells");
+//
+//				const ImVec2 p3 = ImGui::GetCursorScreenPos();
+//				draw_list->AddRectFilled(ImVec2(p3.x, p3.y), ImVec2(p3.x + 20, p3.y + 20), Usedcell);
+//				ImGui::Text("   Used memory cells");
+
+//				ImGui::Text("\nApplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 				ImGui::End();
 			}
-
-			if (show_memory_window)
 			{
-				ImGui::Begin("Memory");
+				ImGui::Begin("Values");
 				static bool SMstart = false;
-				if (!SMstart)
+				if (!SMstart || value_count < FACT_COUNT)
 				{
 					SMstart = true;
-					ImGui::SetWindowSize({870, 620});
+					windowSizeValues.x = 300;
+					windowSizeValues.y = (float)(30 + 40 * FACT_COUNT);
+					ImGui::SetWindowSize(windowSizeValues);
 				}
-
-				static ImVec4 colf = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-				const ImU32 col = ImColor(colf);
-				ImDrawList* draw_list = ImGui::GetWindowDrawList();
-				const ImVec2 p = ImGui::GetCursorScreenPos();
-
-				float i = p.x;
-				float j = p.y;
-				for (auto & colorBoxe : colorBoxes)
+				while (value_count < FACT_COUNT)
 				{
-					if (p.x + ImGui::GetWindowSize().x < i + 10)
-					{
-						i = p.x;
-						j += 20;
-					}
-					draw_list->AddRectFilled(ImVec2(i, j), ImVec2(i + 20, j + 20), colorBoxe);
-					i += 20;
+					staticValueForFacts.push_back(2);
+					++value_count;
 				}
+				while (value_count > FACT_COUNT)
+				{
+					staticValueForFacts.pop_back();
+					--value_count;
+				}
+				for (int i = 0; i < value_count; i++){
+					char *cstr = new char[1 + 1];
+					cstr[0] = FACT_VECTOR[i][0];
+					cstr[1] = '\0';
+					addRadioButtonForVar(cstr, &staticValueForFacts[i]);
+					delete[] cstr;
+				}
+
+				//addRadioButtonForVar();
 				ImGui::End();
 			}
 
@@ -214,3 +305,4 @@ int main(int ac, char **av) {
 		glfwTerminate();
 	}
 }
+
