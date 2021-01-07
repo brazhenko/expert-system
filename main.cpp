@@ -2,7 +2,8 @@
 
 
 #include <iostream>
-
+#include "ImNodes.h"
+#include "ImNodesEz.h"
 
 #include "little_imgui/imgui.h"
 #include "little_imgui/imgui_impl_glfw.h"
@@ -84,6 +85,8 @@ public:
 
 };
 
+
+
 int main(int ac, char **av) {
 
 
@@ -130,6 +133,8 @@ int main(int ac, char **av) {
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		ImNodes::CanvasState canvas;
+//		imnodes::Initialize();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -178,6 +183,47 @@ int main(int ac, char **av) {
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
+
+			{
+				// Graph
+
+				if (ImGui::Begin("ImNodes", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+				{
+					ImNodes::BeginCanvas(&canvas);
+
+					struct Node
+					{
+						ImVec2 pos{};
+						bool selected{};
+						ImNodes::Ez::SlotInfo inputs[1];
+						ImNodes::Ez::SlotInfo outputs[1];
+					};
+
+					static Node nodes[3] = {
+							{{50, 100}, false, {{"In", 1}}, {{"Out", 1}}},
+							{{250, 50}, false, {{"In", 1}}, {{"Out", 1}}},
+							{{250, 100}, false, {{"In", 1}}, {{"Out", 1}}},
+					};
+
+					for (Node& node : nodes)
+					{
+						if (ImNodes::Ez::BeginNode(&node, "Node Title", &node.pos, &node.selected))
+						{
+							ImNodes::Ez::InputSlots(node.inputs, 1);
+							ImNodes::Ez::OutputSlots(node.outputs, 1);
+							ImNodes::Ez::EndNode();
+						}
+					}
+
+					ImNodes::Connection(&nodes[1], "In", &nodes[0], "Out");
+					ImNodes::Connection(&nodes[2], "In", &nodes[0], "Out");
+
+					ImNodes::EndCanvas();
+				}
+				ImGui::End();
+
+
+			}
 
 			// service panel window
 			{

@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "Interpreter.h"
+#include "../Interpreter.h"
 #include <sstream>
 
 expert_system::Value Interpreter::getValueByVarName(char vn) const
