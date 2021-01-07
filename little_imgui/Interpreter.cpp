@@ -50,9 +50,6 @@ void Interpreter::startInteractive()
 extern int yylex_destroy();
 void Interpreter::startFile(const std::string &filename)
 {
-
-	std::cout << "START" << std::endl;
-
 	yylex_destroy();
 
 	yyin = fopen(filename.c_str(),"r");
@@ -109,6 +106,20 @@ void Interpreter::processAllQueries()
 		auto c = queries_.top();
 		queries_.pop();
 		std::cout << "Processing " << c << std::endl;
+
+		if (storage_.find(c) != storage_.end())
+		{
+			if (storage_.find(c)->second == expert_system::Value::True)
+				std::cout << "True" << std::endl;
+			else if (storage_.find(c)->second == expert_system::Value::False)
+				std::cout << "False" << std::endl;
+			else if (storage_.find(c)->second == expert_system::Value::Undefined)
+				std::cout << "Undefined" << std::endl;
+		}
+		else
+		{
+			std::cout << "False" << std::endl;
+		}
 	}
 }
 
@@ -126,7 +137,6 @@ void Interpreter::reset()
 	{
 		delete expr;
 	}
-	fclose(yyin);
 
 	expressions_.clear();
 	storage_.clear();

@@ -30,6 +30,7 @@
 "="								{ return ASSIGN; }
 "?"                             { return QUERY; }
 "show"							{ return SHOW; }
+"reset"							{ return RESET; }
 
 [A-Z]							{
 									yylval.sIndex = *yytext;

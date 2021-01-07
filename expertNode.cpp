@@ -145,6 +145,7 @@ expert_system::Var::~Var()
 ///
 
 expert_system::Value expert_system::Or::eval() {
+	if (this->val_ != Value::Undefined) return this->val_;
 
 	auto leftVal = this->l_->eval();
 	auto rightEval = this->r_->eval();
@@ -224,6 +225,8 @@ void expert_system::Or::evalAs(Value val, bool ask) {
 	if (avlAnswers.size() > 1)
 	{
 		solutions_ = avlAnswers;
+		val_ = val;
+
 		return ;
 	}
 
@@ -377,6 +380,8 @@ std::vector<iExpertNode *> expert_system::Implication::get_children() {
 ///
 
 expert_system::Value expert_system::And::eval() {
+	if (this->val_ != Value::Undefined) return this->val_;
+
 	auto leftVal = this->l_->eval();
 	auto rightVal = this->r_->eval();
 
@@ -492,6 +497,8 @@ std::vector<iExpertNode *> expert_system::And::get_children() {
 ///
 
 expert_system::Value expert_system::Not::eval() {
+	if (this->val_ != Value::Undefined) return this->val_;
+
 	auto res = this->c_->eval();
 
 	if (res == Value::True)
@@ -595,6 +602,8 @@ std::vector<iExpertNode *> expert_system::Not::get_children() {
 ///
 
 expert_system::Value expert_system::Xor::eval() {
+	if (this->val_ != Value::Undefined) return this->val_;
+
 	auto leftVal = this->l_->eval();
 	auto rightVal = this->r_->eval();
 
@@ -673,12 +682,12 @@ void expert_system::Xor::evalAs(Value val, bool ask) {
 		return ;
 	}
 
+	val_ = val;
+
 	if (avlAnswers.size() == 1)
 	{
 		l_->evalAs(LEFT(*avlAnswers.begin()), false);
 		r_->evalAs(RIGHT(*avlAnswers.begin()), false);
-
-		val_ = val;
 		return ;
 	}
 
@@ -707,6 +716,8 @@ std::vector<iExpertNode *> expert_system::Xor::get_children() {
 ///
 
 expert_system::Value expert_system::Equ::eval() {
+	if (this->val_ != Value::Undefined) return this->val_;
+
 	auto leftVal = this->l_->eval();
 	auto rightVal = this->r_->eval();
 

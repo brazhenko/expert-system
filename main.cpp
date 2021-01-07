@@ -9,7 +9,7 @@
 #include "little_imgui/imgui_impl_glfw.h"
 #include "little_imgui/imgui_impl_opengl3.h"
 #include <cstdio>
-
+#include <cstring>
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 #include <GL/gl3w.h>            // Initialize with gl3wInit()
@@ -59,19 +59,65 @@ enum Mode
 	Undefined
 };
 
+enum class WorkMode
+{
+	Interactive = 0,
+	File,
+	Gui
+};
 
+struct
+{
+	WorkMode wm = WorkMode::Interactive;
+	std::string filename;
+} globalArgs;
+
+static void argParse(int ac, char **av)
+{
+	if (ac == 1) return;
+
+	for (int i = 1; i < ac; i++)
+	{
+		if (strcmp(av[i], "-h") == 0)
+		{
+			std::cerr << "Usage: " << av[0] << " [-h] (help) | [-g] (GUI) | [-f file] (filemode) " << std::endl;
+			exit(0);
+		}
+
+		if (strcmp(av[i], "-g") == 0)
+		{
+			globalArgs.wm = WorkMode::Gui;
+			return;
+		}
+
+		if (strcmp(av[i], "-f") == 0)
+		{
+			if (!av[i + 1])
+			{
+				std::cerr << "Usage: " << av[0] << " [-h] (help) | [-g] (GUI) | [-f file] (filemode) " << std::endl;
+				exit(0);
+			}
+			globalArgs.wm = WorkMode::File;
+			globalArgs.filename = av[i + 1];
+			return;
+		}
+
+	}
+}
 
 
 int main(int ac, char **av) {
+	argParse(ac, av);
 
-
-
-	bool gui = true;
-	if (!gui)
+	if (globalArgs.wm == WorkMode::Interactive)
 	{
 		interpreter.startInteractive();
 	}
-	else
+	else if (globalArgs.wm == WorkMode::File)
+	{
+		interpreter.startFile(globalArgs.filename);
+	}
+	else if (globalArgs.wm == WorkMode::Gui)
 	{
 
 		// Setup window
@@ -288,7 +334,8 @@ int main(int ac, char **av) {
 
 					std::cout << "FILE:" << ss.str() << std::endl << std::endl;
 					try {
-
+						extern FILE* yyin;
+						fclose(yyin);
 						interpreter.reset();
 						interpreter.startFile(rulesFileName);
 						changeGraph = true;
@@ -354,5 +401,7 @@ int main(int ac, char **av) {
 		glfwDestroyWindow(window);
 		glfwTerminate();
 	}
+	else
+		std::cerr << "Unknown error" << std::endl;
 }
 

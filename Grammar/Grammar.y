@@ -19,7 +19,6 @@ extern char*	yytext;
 extern int	yychar;
 extern char*	yydebug;
 extern Interpreter interpreter;
-bool assigned = false;
 
 
 void yyerror(const char *msg)
@@ -51,6 +50,7 @@ void yyerror(const char *msg)
 %token ASSIGN
 %token QUERY
 %token SHOW
+%token RESET
 %token ASSIGN_FALSE
 
 %union {
@@ -245,8 +245,11 @@ OTHER:
 	}
 	| SHOW
 	{
-		std::cout << "Showing debug info" << std::endl;
-		std::cout << interpreter.trees_to_string() << std::endl;
+		std::cout << interpreter.trees_to_string();
+	}
+	| RESET
+	{
+		interpreter.reset();
 	}
 
 
