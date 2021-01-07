@@ -17,79 +17,76 @@ using expert_system::iExpertNode;
 # define TOUNSIGNED(VALL, VALR) (unsigned(VALL) << 1U | unsigned(VALR))
 
 # define EVAL_AS(NODENAME) \
-	if (this->val_ != Value::Undefined && this->val_ != val) \
-	{ \
-		std::stringstream ss;\
-		ss << this->to_string() << " cannot be both true and false";\
-		throw std::logic_error(ss.str());\
-	}\
-\
-	auto leftVal = this->l_->eval();\
-	auto rightVal = this->r_->eval();\
-	if (NODENAME == std::string("Implication"))\
-		std::cout << "DEBUG: " << int(leftVal) << " " << int(rightVal) << std::endl;\
-\
-\
-\
-\
-	std::set<unsigned> newS;\
-\
-	if (val == Value::True)\
-	{\
-		auto& t = solutions.at(NODENAME).at(Value::True);\
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),\
-						 std::inserter(newS, newS.begin()));\
-	}\
-	else if (val == Value::False)\
-	{\
-		auto &t = solutions.at(NODENAME).at(Value::False);\
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),\
-						 std::inserter(newS, newS.begin()));\
-	}\
-\
-	if (newS.find(TOUNSIGNED(leftVal, rightVal)) != newS.end())\
-		return ;\
-\
-	if (newS.empty())\
-	{\
-		std::stringstream ss;\
-		ss << "No solution for " << this->to_string();\
-		throw std::logic_error(ss.str());\
-	}\
-\
-	std::set<unsigned> avlAnswers;\
-\
-	for (auto slt : newS)\
-	{\
-		try {\
-			l_->evalAs(LEFT(slt), true);\
-			r_->evalAs(RIGHT(slt), true);\
-\
-			avlAnswers.insert(slt);\
-		}\
-		catch (const std::exception &e) {\
-			/*std::cerr << "DEBUG: " << e.what() << std::endl; */ \
-		}\
-	}\
-\
-	if (ask) return;\
-\
-	if (avlAnswers.size() > 1)\
-	{\
-		solutions_ = avlAnswers;\
-		return ;\
-	}\
-\
-	if (avlAnswers.size() == 1)\
-	{\
-		l_->evalAs(LEFT(*avlAnswers.begin()), false);\
-		r_->evalAs(RIGHT(*avlAnswers.begin()), false);\
-\
-		val_ = val;\
-		return ;\
-	}\
-\
-	throw std::logic_error("No solution exist");\
+		if (this->val_ != Value::Undefined && this->val_ != val) \
+		{ \
+			std::stringstream ss; \
+			ss << this->to_string() << " cannot be both true and false"; \
+			throw std::logic_error(ss.str()); \
+		} \
+ \
+		auto leftVal = this->l_->eval(); \
+		auto rightVal = this->r_->eval(); \
+ \
+		std::set<unsigned> newS; \
+ \
+		if (val == Value::True) \
+		{ \
+			auto& t = solutions.at(NODENAME).at(Value::True); \
+			set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(), \
+							 std::inserter(newS, newS.begin())); \
+		} \
+		else if (val == Value::False) \
+		{ \
+			auto &t = solutions.at(NODENAME).at(Value::False); \
+			set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(), \
+							 std::inserter(newS, newS.begin())); \
+		} \
+ \
+		if (newS.find(TOUNSIGNED(leftVal, rightVal)) != newS.end()) \
+			return ; \
+ \
+		if (newS.empty()) \
+		{ \
+			std::stringstream ss; \
+			ss << "No solution for " << this->to_string(); \
+			throw std::logic_error(ss.str()); \
+		} \
+ \
+		std::set<unsigned> avlAnswers; \
+ \
+		for (auto slt : newS) \
+		{ \
+			try { \
+				l_->evalAs(LEFT(slt), true); \
+				r_->evalAs(RIGHT(slt), true); \
+ \
+				avlAnswers.insert(slt); \
+			} \
+			catch (const std::exception &e) { \
+				if (ask) throw; \
+			} \
+		} \
+ \
+		if (ask) return; \
+ \
+		if (avlAnswers.size() > 1) \
+		{ \
+			solutions_ = avlAnswers; \
+			val_ = val; \
+			return ; \
+		} \
+ \
+		if (avlAnswers.size() == 1) \
+		{ \
+			l_->evalAs(LEFT(*avlAnswers.begin()), false); \
+			r_->evalAs(RIGHT(*avlAnswers.begin()), false); \
+ \
+			val_ = val; \
+			return ; \
+		} \
+ \
+		throw std::logic_error("No solution exist"); \
+
 
 ///
 /// Var
@@ -216,7 +213,6 @@ void expert_system::Or::evalAs(Value val, bool ask) {
 		}
 		catch (const std::exception &e) {
 			if (ask) throw;
-			/*std::cerr << "DEBUG: " << e.what() << std::endl; */
 		}
 	}
 
@@ -226,7 +222,6 @@ void expert_system::Or::evalAs(Value val, bool ask) {
 	{
 		solutions_ = avlAnswers;
 		val_ = val;
-
 		return ;
 	}
 
