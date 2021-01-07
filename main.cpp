@@ -364,6 +364,7 @@ int main(int ac, char **av) {
 					{
 						changeGraph = false;
 						nnodes.clear();
+
 						float ii = 50, jj = 50;
 						for (const auto &el : interpreter.repeatDestroyer_)
 						{
@@ -427,7 +428,6 @@ int main(int ac, char **av) {
 					windowSizeFormulas.y = (float)(90 + 23 * rows_count);
 					ImGui::SetWindowSize(windowSizeFormulas);
 				}
-				// Config boxes
 
 				for (int i = 0; i < rows_count; i++){
 					std::stringstream ss;
@@ -474,14 +474,12 @@ int main(int ac, char **av) {
 					ss <<  true_vars.get() << std::endl;
 					ss << "show" << std::endl;
 
-
 					std::string rulesFileName = "/tmp/expert_system";
 					std::ofstream myfile;
 					myfile.open (rulesFileName);
 					myfile << ss.str();
 					myfile.close();
 
-					std::cout << "FILE:" << ss.str() << std::endl << std::endl;
 					try {
 						extern FILE* yyin;
 						fclose(yyin);
@@ -490,44 +488,14 @@ int main(int ac, char **av) {
 						changeGraph = true;
 						lastError = "";
 					} catch (const std::exception &e) {
+						interpreter.reset();
+						changeGraph = true;
 						lastError = e.what();
 					}
-
-
 				}
 
 
 				ImGui::Text("%s", lastError.c_str());
-
-
-//				ImGui::Checkbox("memory Window", &show_memory_window);
-//				ImGui::Checkbox("Tiny Clusters", &show_tiny_clusters);
-//				ImGui::Checkbox("Small Clusters", &show_small_clusters);
-//				ImGui::Checkbox("Huge Clusters", &show_huge_clusters);
-//				if (ImGui::Button(">>"))
-//				{
-//					colorBoxes.clear();
-//
-//				}
-//				ImDrawList* draw_list = ImGui::GetWindowDrawList();
-//
-//				const ImVec2 p = ImGui::GetCursorScreenPos();
-//				draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 20, p.y + 20), Cluster);
-//				ImGui::Text("   Start of memory zone");
-//
-//				const ImVec2 p1 = ImGui::GetCursorScreenPos();
-//				draw_list->AddRectFilled(ImVec2(p1.x, p1.y), ImVec2(p1.x + 20, p1.y + 20), Block);
-//				ImGui::Text("   Start of memory block");
-//
-//				const ImVec2 p2 = ImGui::GetCursorScreenPos();
-//				draw_list->AddRectFilled(ImVec2(p2.x, p2.y), ImVec2(p2.x + 20, p2.y + 20), FreeCell);
-//				ImGui::Text("   Free memory cells");
-//
-//				const ImVec2 p3 = ImGui::GetCursorScreenPos();
-//				draw_list->AddRectFilled(ImVec2(p3.x, p3.y), ImVec2(p3.x + 20, p3.y + 20), Usedcell);
-//				ImGui::Text("   Used memory cells");
-
-//				ImGui::Text("\nApplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 				ImGui::End();
 			}
