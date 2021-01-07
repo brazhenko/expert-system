@@ -105,20 +105,19 @@ void Interpreter::processAllQueries()
 	{
 		auto c = queries_.top();
 		queries_.pop();
-		std::cout << "Processing " << c << std::endl;
 
 		if (storage_.find(c) != storage_.end())
 		{
 			if (storage_.find(c)->second == expert_system::Value::True)
-				std::cout << "True" << std::endl;
+				std::cout << c << " = " << "True" << std::endl;
 			else if (storage_.find(c)->second == expert_system::Value::False)
-				std::cout << "False" << std::endl;
+				std::cout << c << " = " << "False" << std::endl;
 			else if (storage_.find(c)->second == expert_system::Value::Undefined)
-				std::cout << "Undefined" << std::endl;
+				std::cout << c << " = " << "Undefined" << std::endl;
 		}
 		else
 		{
-			std::cout << "False" << std::endl;
+			std::cout << c << " = " << "False" << std::endl;
 		}
 	}
 }

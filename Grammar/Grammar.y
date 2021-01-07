@@ -239,7 +239,6 @@ OTHER:
 ASSIGN_FALSE_VARS:
 	| VAR ASSIGN_FALSE_VARS
 	{
-		std::cout << $1 << " assigned false" << std::endl;
 		interpreter.setVarWithValue(expert_system::Value::False, $1);
 	}
 	;
@@ -247,7 +246,6 @@ ASSIGN_FALSE_VARS:
 ASSIGN_VARS:
 	| VAR ASSIGN_VARS
 	{
-		std::cout << $1 << " assigned true" << std::endl;
 		interpreter.setVarWithValue(expert_system::Value::True, $1);
 	}
 	;
@@ -255,8 +253,6 @@ ASSIGN_VARS:
 QUERY_VARS:
 	| VAR QUERY_VARS
 	{
-		std::cout << "QUERY VAR" << std::endl;
-		std::cout << $1 << " what?" << std::endl;
 		interpreter.addQuery($1);
 	}
 	;

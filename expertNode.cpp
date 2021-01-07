@@ -165,76 +165,7 @@ std::string expert_system::Or::to_string() {
 }
 
 void expert_system::Or::evalAs(Value val, bool ask) {
-	if (this->val_ != Value::Undefined && this->val_ != val)
-	{
-		std::stringstream ss;
-		ss << this->to_string() << " cannot be both true and false";
-		throw std::logic_error(ss.str());
-	}
-
-	auto leftVal = this->l_->eval();
-	auto rightVal = this->r_->eval();
-
-
-	std::set<unsigned> newS;
-
-	if (val == Value::True)
-	{
-		auto& t = solutions.at("Or").at(Value::True);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-	else if (val == Value::False)
-	{
-		auto &t = solutions.at("Or").at(Value::False);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-
-	if (newS.find(TOUNSIGNED(leftVal, rightVal)) != newS.end())
-		return ;
-
-	if (newS.empty())
-	{
-		std::stringstream ss;
-		ss << "No solution for " << this->to_string();
-		throw std::logic_error(ss.str());
-	}
-
-	std::set<unsigned> avlAnswers;
-
-	for (auto slt : newS)
-	{
-		try {
-			l_->evalAs(LEFT(slt), true);
-			r_->evalAs(RIGHT(slt), true);
-
-			avlAnswers.insert(slt);
-		}
-		catch (const std::exception &e) {
-			if (ask) throw;
-		}
-	}
-
-	if (ask) return;
-
-	if (avlAnswers.size() > 1)
-	{
-		solutions_ = avlAnswers;
-		val_ = val;
-		return ;
-	}
-
-	if (avlAnswers.size() == 1)
-	{
-		l_->evalAs(LEFT(*avlAnswers.begin()), false);
-		r_->evalAs(RIGHT(*avlAnswers.begin()), false);
-
-		val_ = val;
-		return ;
-	}
-
-	throw std::logic_error("No solution exist");
+	EVAL_AS("Or")
 }
 
 std::string expert_system::Or::to_reduced_string() {
@@ -279,78 +210,7 @@ std::string expert_system::Implication::to_string() {
 }
 
 void expert_system::Implication::evalAs(Value val, bool ask) {
-	if (this->val_ != Value::Undefined && this->val_ != val) 
-	{ 
-		std::stringstream ss;
-		ss << this->to_string() << " cannot be both true and false";
-		throw std::logic_error(ss.str());
-	}
-
-	auto leftVal = this->l_->eval();
-	auto rightVal = this->r_->eval();
-
-
-
-
-	std::set<unsigned> newS;
-
-	if (val == Value::True)
-	{
-		auto& t = solutions.at("Implication").at(Value::True);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-	else if (val == Value::False)
-	{
-		auto &t = solutions.at("Implication").at(Value::False);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-
-	if (newS.find(TOUNSIGNED(leftVal, rightVal)) != newS.end())
-		return ;
-
-	if (newS.empty())
-	{
-		std::stringstream ss;
-		ss << "No solution for " << this->to_string();
-		throw std::logic_error(ss.str());
-	}
-
-	std::set<unsigned> avlAnswers;
-
-	for (auto slt : newS)
-	{
-		try {
-			l_->evalAs(LEFT(slt), true);
-			r_->evalAs(RIGHT(slt), true);
-
-			avlAnswers.insert(slt);
-		}
-		catch (const std::exception &e) {
-			if (ask) throw;
-			/*std::cerr << "DEBUG: " << e.what() << std::endl; */ 
-		}
-	}
-
-	if (ask) return;
-
-	if (avlAnswers.size() > 1)
-	{
-		solutions_ = avlAnswers;
-		return ;
-	}
-
-	if (avlAnswers.size() == 1)
-	{
-		l_->evalAs(LEFT(*avlAnswers.begin()), false);
-		r_->evalAs(RIGHT(*avlAnswers.begin()), false);
-
-		val_ = val;
-		return ;
-	}
-
-	throw std::logic_error("No solution exist");
+	EVAL_AS("Implication")
 }
 
 std::string expert_system::Implication::to_reduced_string() {
@@ -395,76 +255,7 @@ std::string expert_system::And::to_string() {
 }
 
 void expert_system::And::evalAs(Value val, bool ask) {
-	if (this->val_ != Value::Undefined && this->val_ != val)
-	{
-		std::stringstream ss;
-		ss << this->to_string() << " cannot be both true and false";
-		throw std::logic_error(ss.str());
-	}
-
-	auto leftVal = this->l_->eval();
-	auto rightVal = this->r_->eval();
-
-
-	std::set<unsigned> newS;
-
-	if (val == Value::True)
-	{
-		auto& t = solutions.at("And").at(Value::True);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-	else if (val == Value::False)
-	{
-		auto &t = solutions.at("And").at(Value::False);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-
-	if (newS.find(TOUNSIGNED(leftVal, rightVal)) != newS.end())
-		return ;
-
-	if (newS.empty())
-	{
-		std::stringstream ss;
-		ss << "No solution for " << this->to_string();
-		throw std::logic_error(ss.str());
-	}
-
-	std::set<unsigned> avlAnswers;
-
-	for (auto slt : newS)
-	{
-		try {
-			l_->evalAs(LEFT(slt), true);
-			r_->evalAs(RIGHT(slt), true);
-
-			avlAnswers.insert(slt);
-		}
-		catch (const std::exception &e) {
-			if (ask) throw;
-			/*std::cerr << "DEBUG: " << e.what() << std::endl; */
-		}
-	}
-
-	if (ask) return;
-
-	if (avlAnswers.size() > 1)
-	{
-		solutions_ = avlAnswers;
-		return ;
-	}
-
-	if (avlAnswers.size() == 1)
-	{
-		l_->evalAs(LEFT(*avlAnswers.begin()), false);
-		r_->evalAs(RIGHT(*avlAnswers.begin()), false);
-
-		val_ = val;
-		return ;
-	}
-
-	throw std::logic_error("No solution exist");
+	EVAL_AS("And")
 }
 
 std::string expert_system::And::to_reduced_string() {
@@ -614,76 +405,7 @@ std::string expert_system::Xor::to_string() {
 }
 
 void expert_system::Xor::evalAs(Value val, bool ask) {
-	if (this->val_ != Value::Undefined && this->val_ != val)
-	{
-		std::stringstream ss;
-		ss << this->to_string() << " cannot be both true and false";
-		throw std::logic_error(ss.str());
-	}
-
-	auto leftVal = this->l_->eval();
-	auto rightVal = this->r_->eval();
-
-
-	std::set<unsigned> newS;
-
-	if (val == Value::True)
-	{
-		auto& t = solutions.at("Xor").at(Value::True);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-	else if (val == Value::False)
-	{
-		auto &t = solutions.at("Xor").at(Value::False);
-		set_intersection(t.begin(), t.end(), solutions_.begin(), solutions_.end(),
-						 std::inserter(newS, newS.begin()));
-	}
-
-	if (newS.find(TOUNSIGNED(leftVal, rightVal)) != newS.end())
-		return ;
-
-	if (newS.empty())
-	{
-		std::stringstream ss;
-		ss << "No solution for " << this->to_string();
-		throw std::logic_error(ss.str());
-	}
-
-	std::set<unsigned> avlAnswers;
-
-	for (auto slt : newS)
-	{
-		try {
-			l_->evalAs(LEFT(slt), true);
-			r_->evalAs(RIGHT(slt), true);
-
-			avlAnswers.insert(slt);
-		}
-		catch (const std::exception &e) {
-			if (ask) throw;
-			/*std::cerr << "DEBUG: " << e.what() << std::endl; */
-		}
-	}
-
-	if (ask) return;
-
-	if (avlAnswers.size() > 1)
-	{
-		solutions_ = avlAnswers;
-		return ;
-	}
-
-	val_ = val;
-
-	if (avlAnswers.size() == 1)
-	{
-		l_->evalAs(LEFT(*avlAnswers.begin()), false);
-		r_->evalAs(RIGHT(*avlAnswers.begin()), false);
-		return ;
-	}
-
-	throw std::logic_error("No solution exist");
+	EVAL_AS("Xor")
 }
 
 std::string expert_system::Xor::to_reduced_string() {
