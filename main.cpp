@@ -216,11 +216,21 @@ int main(int ac, char **av) {
 
 	if (globalArgs.wm == WorkMode::Interactive)
 	{
-		interpreter.startInteractive();
+		try {
+			interpreter.startInteractive();
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
+			return 0;
+		}
 	}
 	else if (globalArgs.wm == WorkMode::File)
 	{
-		interpreter.startFile(globalArgs.filename);
+		try {
+			interpreter.startFile(globalArgs.filename);
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
+			return 0;
+		}
 	}
 	else if (globalArgs.wm == WorkMode::Gui)
 	{
