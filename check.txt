@@ -64,9 +64,8 @@ Basic XOR conditions
 The program can handle basic XOR conditions.
 
 Example input 1:
-B + C => A
-D ^ E => B
-B => C
+s
+
 
 [INITIAL FACTS HERE]
 ?A

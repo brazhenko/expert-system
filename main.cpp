@@ -239,7 +239,7 @@ int main(int ac, char **av) {
 
 
 		// Create window with graphics context
-		GLFWwindow* window = glfwCreateWindow(720, 720, "expert-system", NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(900, 1000, "expert-system", NULL, NULL);
 		if (window == nullptr)
 			return 1;
 		glfwMakeContextCurrent(window);
@@ -350,7 +350,6 @@ int main(int ac, char **av) {
 
 
 					static std::vector<Node> nnodes;
-
 					if (changeGraph)
 					{
 						changeGraph = false;
@@ -371,6 +370,17 @@ int main(int ac, char **av) {
 							ImNodes::Ez::InputSlots(node.outputs, 1);
 							ImNodes::Ez::OutputSlots(node.inputs, 1);
 							ImGui::Text("%s", node.reducedVal.c_str());
+
+							if (node.id->eval() == expert_system::Value::True)
+							{
+								TextWithColors("{19a119}True");
+							}
+							else
+							{
+								TextWithColors("{ff3232}False");
+							}
+
+
 							ImNodes::Ez::EndNode();
 						}
 

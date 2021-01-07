@@ -387,7 +387,6 @@ expert_system::Value expert_system::And::eval() {
 
 	if (leftVal == Value::True && rightVal == Value::True)
 	{
-		std::cout << "TRUE" << std::endl;
 		return Value::True;
 	}
 
@@ -410,8 +409,6 @@ void expert_system::And::evalAs(Value val, bool ask) {
 
 	auto leftVal = this->l_->eval();
 	auto rightVal = this->r_->eval();
-
-
 
 
 	std::set<unsigned> newS;
