@@ -5,23 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 include(Grammar/grammar.cmake)
 #
-add_custom_target(minilibx COMMAND make
-		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/minilibx_macos
-		)
-
-
-
-#find_package(GLEW REQUIRED)
-#find_package(GLUT REQUIRED)
-
-find_package(NumCpp REQUIRED)
-
-#find_package(OpenCL REQUIRED)
-#find_package(OpenCL 1.2 EXACT REQUIRED)
-
-
-#find_package(GLUT REQUIRED)
-#include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
@@ -32,9 +15,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 # <IMGUI>
 find_package (
 		glfw3 REQUIRED
-#		NAMES glfw3 libglfw3 glfw # what to look for
-#		HINTS "/usr/local/lib/cmake" # where to look
-		#NO_DEFAULT_PATH # do not search system default paths
 )
 
 find_package(OpenGL REQUIRED)
@@ -90,5 +70,4 @@ target_link_libraries(${PROJECT_NAME}
 		glfw
 		${OPENGL_LIBRARIES}
 		GLEW::GLEW
-		NumCpp::NumCpp
 		)
