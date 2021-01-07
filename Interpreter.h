@@ -37,6 +37,7 @@ public:
 	bool storageChanged() const;
 	void reset();
 
+
 	std::string trees_to_string() const;
 
 };

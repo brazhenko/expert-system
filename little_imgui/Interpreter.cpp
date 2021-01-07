@@ -146,5 +146,3 @@ void Interpreter::reset()
 	repeatUsageCount_.clear();
 }
 
-
-
