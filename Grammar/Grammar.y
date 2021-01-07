@@ -74,14 +74,12 @@ S:
 FULLEXPR:
 	EXPR NL
 	{
-//		std::cout << "Expression done!" << std::endl;
 		interpreter.addExpression($1);
 	}
 
 OTHERS:
 	OTHER NL
 	{
-//		std::cout << "Other" << std::endl;
 	}
 
 EXPR:
@@ -101,8 +99,6 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-//		std::cout << $$->to_string() << std::endl;
 	}
 	| EXPR IMPLIES EXPR
 	{
@@ -120,8 +116,6 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-		// std::cout << $$->to_string() << std::endl;
 	}
  	| EXPR XOR EXPR
  	{
@@ -139,8 +133,6 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-//		std::cout << $$->to_string() << std::endl;
  	}
 	| EXPR OR EXPR
 	{
@@ -158,8 +150,6 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-//		std::cout << $$->to_string() << std::endl;
 	}
 	| EXPR AND EXPR
 	{
@@ -177,8 +167,6 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-//		std::cout << $$->to_string() << std::endl;
 	}
 	| NOT EXPR
 	{
@@ -196,13 +184,10 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-//		std::cout << $$->to_string() << std::endl;
 	}
 	| BROPEN EXPR BRCLOSE
 	{
 		$$ = $2;
-//		std::cout << $$->to_string() << std::endl;
 	}
 	| VAR
 	{
@@ -220,8 +205,6 @@ EXPR:
 			interpreter.repeatDestroyer_[$$->to_string()] = $$;
 			interpreter.repeatUsageCount_[$$->to_string()] = 1;
 		}
-
-//		std::cout << $$->to_string() << std::endl;
 	}
 	;
 
@@ -257,7 +240,6 @@ ASSIGN_FALSE_VARS:
 	| VAR ASSIGN_FALSE_VARS
 	{
 		std::cout << $1 << " assigned false" << std::endl;
-
 		interpreter.setVarWithValue(expert_system::Value::False, $1);
 	}
 	;
@@ -266,9 +248,7 @@ ASSIGN_VARS:
 	| VAR ASSIGN_VARS
 	{
 		std::cout << $1 << " assigned true" << std::endl;
-
 		interpreter.setVarWithValue(expert_system::Value::True, $1);
-
 	}
 	;
 
