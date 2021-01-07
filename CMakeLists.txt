@@ -62,12 +62,18 @@ SET(IMGUI_SOURCES
 		little_imgui/imgui_impl_opengl3.h
 		little_imgui/imgui_impl_glfw.cpp
 		little_imgui/imgui_impl_glfw.h
-		little_imgui/Interpreter.cpp Interpreter.h
+
 
 		little_imgui/ImNodes.cpp
 		little_imgui/ImNodes.h
 		little_imgui/ImNodesEz.cpp
 		little_imgui/ImNodesEz.h
+
+		little_imgui/imconfig.h
+		little_imgui/imgui_internal.h
+		little_imgui/imstb_rectpack.h
+		little_imgui/imstb_textedit.h
+		little_imgui/imstb_truetype.h
 		)
 
 # </IMGUI>
@@ -76,7 +82,7 @@ SET(IMGUI_SOURCES
 
 
 add_executable(${PROJECT_NAME} main.cpp
-		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h
+		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h little_imgui/Interpreter.cpp Interpreter.h
 		${IMGUI_SOURCES})
 add_dependencies(${PROJECT_NAME}  Grammar)
 
