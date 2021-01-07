@@ -129,6 +129,8 @@ With =G, E should be false.
 With =H, E should be false.
 With =FH, E should be true.
 With =GH, E should be true.
+
+
 Data structures
 
 Facts and rules storage

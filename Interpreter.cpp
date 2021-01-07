@@ -9,7 +9,7 @@
 expert_system::Value Interpreter::getValueByVarName(char vn) const
 {
 	try {
-		return cache_.at(vn);
+		return storage_.at(vn);
 	} catch (...) {
 		return expert_system::Value::False;
 	}
@@ -17,26 +17,17 @@ expert_system::Value Interpreter::getValueByVarName(char vn) const
 
 bool Interpreter::isVarSet(char vn) const {
 	try {
-		cache_.at(vn);
+		storage_.at(vn);
 		return true;
 	} catch (...) {
 		return false;
 	}
 }
 
-void Interpreter::commitChanges()
-{
-	this->storage_ = this->cache_;
-}
-
-void Interpreter::discardChanges()
-{
-	this->cache_ = this->storage_;
-}
-
 void Interpreter::setVarWithValue(expert_system::Value vl, char vn)
 {
-	this->cache_[vn] = vl;
+	this->storage_[vn] = vl;
+	this->storage_changed_ = true;
 }
 
 void Interpreter::evalAllAsTrue()
@@ -106,6 +97,14 @@ void Interpreter::processAllQueries()
 		queries_.pop();
 		std::cout << "Processing " << c << std::endl;
 	}
+}
+
+bool Interpreter::storageChanged() const
+{
+	bool ret = storage_changed_;
+	storage_changed_ = false;
+
+	return ret;
 }
 
 

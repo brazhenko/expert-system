@@ -97,7 +97,7 @@ namespace expert_system {
 		Value val_ = Value::Undefined;
 	public:
 		virtual Value eval() = 0;
-		virtual void evalAs(Value val) = 0;
+		virtual void evalAs(Value val, bool ask = false) = 0;
 		virtual std::string to_string() = 0;
 		virtual std::string to_reduced_string() = 0;
 		virtual ~iExpertNode() = default;
@@ -112,7 +112,7 @@ namespace expert_system {
 		Implication(iExpertNode *l, iExpertNode *r) : l_{l}, r_{r}
 		{}
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~Implication() override;
@@ -127,7 +127,7 @@ namespace expert_system {
 		And(iExpertNode *l, iExpertNode *r) : l_{l}, r_{r}
 		{}
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~And() override;
@@ -142,7 +142,7 @@ namespace expert_system {
 		Or(iExpertNode *l, iExpertNode *r) : l_{l}, r_{r}
 		{}
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~Or() override;
@@ -158,7 +158,7 @@ namespace expert_system {
 		explicit Not(iExpertNode *c) : c_{c}
 		{}
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~Not() override;
@@ -173,7 +173,7 @@ namespace expert_system {
 		Xor(iExpertNode *l, iExpertNode *r) : l_{l}, r_{r}
 		{}
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~Xor() override;
@@ -188,7 +188,7 @@ namespace expert_system {
 		Equ(iExpertNode *l, iExpertNode *r) : l_{l}, r_{r}
 		{}
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~Equ() override;
@@ -206,22 +206,12 @@ namespace expert_system {
 		}
 		char varName() const { return Letter; }
 		Value eval() override;
-		void evalAs(Value val) override;
+		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
 		~Var() override;
 	};
 
-	class Val final : public iExpertNode
-	{
-	private:
-		Value val{};
-	public:
-		Value eval() override;
-		void evalAs(Value v) override;
-		std::string to_string() override;
-		std::string to_reduced_string() override;
-	};
 
 }
 

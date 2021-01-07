@@ -185,7 +185,11 @@ EXPR:
 OTHER:
 	ASSIGN ASSIGN_VARS
 	{
-		interpreter.evalAllAsTrue();
+		do
+		{
+			interpreter.evalAllAsTrue();
+		}
+		while (interpreter.storageChanged());
 	}
 	| ASSIGN_FALSE ASSIGN_FALSE_VARS
 	{
@@ -207,13 +211,7 @@ ASSIGN_FALSE_VARS:
 	{
 		std::cout << $1 << " assigned false" << std::endl;
 
-		try {
-			interpreter.setVarWithValue(expert_system::Value::False, $1);
-			interpreter.commitChanges();
-		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
-			interpreter.discardChanges();
-		}
+		interpreter.setVarWithValue(expert_system::Value::False, $1);
 	}
 	;
 
@@ -223,7 +221,6 @@ ASSIGN_VARS:
 		std::cout << $1 << " assigned true" << std::endl;
 
 		interpreter.setVarWithValue(expert_system::Value::True, $1);
-		interpreter.commitChanges();
 
 	}
 	;
