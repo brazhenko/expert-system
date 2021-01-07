@@ -10,6 +10,7 @@
 
 extern Interpreter interpreter;
 using expert_system::Value;
+using expert_system::iExpertNode;
 
 # define RIGHT(VAL) Value((VAL) & 1U)
 # define LEFT(VAL) Value((unsigned(VAL) >> 1U) & 1U)
@@ -132,6 +133,10 @@ std::string expert_system::Var::to_reduced_string() {
 	return "False";
 }
 
+std::vector<iExpertNode *> expert_system::Var::get_children() {
+	return std::vector<iExpertNode *>();
+}
+
 expert_system::Var::~Var()
 = default;
 
@@ -240,15 +245,16 @@ std::string expert_system::Or::to_reduced_string() {
 }
 
 expert_system::Or::~Or() {
-	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[l_->to_string()]-- == 1)
 		delete l_;
 
-	interpreter.repeatUsageCount_[l_->to_string()]--;
-
-	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[r_->to_string()]-- == 1)
 		delete r_;
 
-	interpreter.repeatUsageCount_[r_->to_string()]--;
+}
+
+std::vector<iExpertNode *> expert_system::Or::get_children() {
+	return {l_, r_};
 }
 
 ///
@@ -355,15 +361,15 @@ std::string expert_system::Implication::to_reduced_string() {
 }
 
 expert_system::Implication::~Implication() {
-	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[l_->to_string()]-- == 1)
 		delete l_;
 
-	interpreter.repeatUsageCount_[l_->to_string()]--;
-
-	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[r_->to_string()]-- == 1)
 		delete r_;
+}
 
-	interpreter.repeatUsageCount_[r_->to_string()]--;
+std::vector<iExpertNode *> expert_system::Implication::get_children() {
+	return {l_, r_};
 }
 
 ///
@@ -470,15 +476,15 @@ std::string expert_system::And::to_reduced_string() {
 }
 
 expert_system::And::~And() {
-	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[l_->to_string()]-- == 1)
 		delete l_;
 
-	interpreter.repeatUsageCount_[l_->to_string()]--;
-
-	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[r_->to_string()]-- == 1)
 		delete r_;
+}
 
-	interpreter.repeatUsageCount_[r_->to_string()]--;
+std::vector<iExpertNode *> expert_system::And::get_children() {
+	return {l_, r_};
 }
 
 ///
@@ -576,10 +582,12 @@ std::string expert_system::Not::to_reduced_string() {
 }
 
 expert_system::Not::~Not() {
-	if (interpreter.repeatUsageCount_[c_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[c_->to_string()]-- == 1)
 		delete c_;
+}
 
-	interpreter.repeatUsageCount_[c_->to_string()]--;
+std::vector<iExpertNode *> expert_system::Not::get_children() {
+	return {c_};
 }
 
 ///
@@ -683,15 +691,15 @@ std::string expert_system::Xor::to_reduced_string() {
 }
 
 expert_system::Xor::~Xor() {
-	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[l_->to_string()]-- == 1)
 		delete l_;
 
-	interpreter.repeatUsageCount_[l_->to_string()]--;
-
-	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[r_->to_string()]-- == 1)
 		delete r_;
+}
 
-	interpreter.repeatUsageCount_[r_->to_string()]--;
+std::vector<iExpertNode *> expert_system::Xor::get_children() {
+	return {l_, r_};
 }
 
 ///
@@ -726,14 +734,14 @@ std::string expert_system::Equ::to_reduced_string() {
 }
 
 expert_system::Equ::~Equ() {
-	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[l_->to_string()]-- == 1)
 		delete l_;
 
-	interpreter.repeatUsageCount_[l_->to_string()]--;
-
-	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
+	if (interpreter.repeatUsageCount_[r_->to_string()]-- == 1)
 		delete r_;
+}
 
-	interpreter.repeatUsageCount_[r_->to_string()]--;
+std::vector<iExpertNode *> expert_system::Equ::get_children() {
+	return {l_, r_};
 }
 

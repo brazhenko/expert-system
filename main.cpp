@@ -60,31 +60,6 @@ enum Mode
 };
 
 
-void addRadioButtonForVar(char*fact, int *e) {
-	std::vector<ImColor>	colorBoxes;
-
-	ImGui::Text("Choose value fact %s\n", fact);
-
-	std::stringstream  ss;
-	ss << "True " << fact;
-
-	std::stringstream  ss2;
-	ss2 << "False " << fact;
-
-	std::stringstream  ss3;
-	ss3 << "Undefined " << fact;
-
-	ImGui::RadioButton(ss.str().c_str(), e, True); ImGui::SameLine();
-	ImGui::RadioButton(ss2.str().c_str(), e, False); ImGui::SameLine();
-	ImGui::RadioButton(ss3.str().c_str(), e, Undefined);
-
-}
-
-class RadioButton {
-public:
-
-};
-
 
 
 int main(int ac, char **av) {
@@ -151,20 +126,21 @@ int main(int ac, char **av) {
 		bool show_memory_window = false;
 		bool show_tiny_clusters = false, show_small_clusters = false, show_huge_clusters = false;
 		auto true_vars = std::shared_ptr<char>(new char[101]);
+		bool changeGraph = false;
 		true_vars.get()[0] = '=';
 		std::string lastError;
 
 		int rows_count = 0;
+		const int start_rows_count = 3;
 		int value_count = 0;
 		std::vector<char*> inputExpressions;
 		std::vector<char*> Facts;
 		std::vector<int> staticValueForFacts;
-		ImVec2 windowSizeValues;
 		ImVec2 windowSizeFormulas;
 
 
 
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		ImVec4 clear_color = ImVec4(1.f, 0.55f, 0.60f, 1.00f);
 		std::stringstream archive;
 
 
@@ -173,11 +149,6 @@ int main(int ac, char **av) {
 
 		while (!glfwWindowShouldClose(window))
 		{
-
-
-			std::vector<std::string> FACT_VECTOR {"Z","A","F","S","Q","W","E","R"};
-			int FACT_COUNT = FACT_VECTOR.size();
-
 			glfwPollEvents();
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
@@ -197,26 +168,44 @@ int main(int ac, char **av) {
 						bool selected{};
 						ImNodes::Ez::SlotInfo inputs[1];
 						ImNodes::Ez::SlotInfo outputs[1];
+						std::string nodeTytle;
+						expert_system::iExpertNode *id;
+						std::string reducedVal;
 					};
 
-					static Node nodes[3] = {
-							{{50, 100}, false, {{"In", 1}}, {{"Out", 1}}},
-							{{250, 50}, false, {{"In", 1}}, {{"Out", 1}}},
-							{{250, 100}, false, {{"In", 1}}, {{"Out", 1}}},
-					};
 
-					for (Node& node : nodes)
+					static std::vector<Node> nnodes;
+
+					if (changeGraph)
 					{
-						if (ImNodes::Ez::BeginNode(&node, "Node Title", &node.pos, &node.selected))
+						changeGraph = false;
+						nnodes.clear();
+						float ii = 50, jj = 50;
+						for (const auto &el : interpreter.repeatDestroyer_)
 						{
-							ImNodes::Ez::InputSlots(node.inputs, 1);
-							ImNodes::Ez::OutputSlots(node.outputs, 1);
+							nnodes.push_back({{ii, jj}, false, {{"Out", 1}}, {{"In", 1}}, el.first, el.second, el.second->to_reduced_string()});
+							ii+=40;
+							jj+=40;
+						}
+
+					}
+					for (Node& node : nnodes)
+					{
+						if (ImNodes::Ez::BeginNode(node.id, node.nodeTytle.c_str(), &node.pos, &node.selected))
+						{
+							ImNodes::Ez::InputSlots(node.outputs, 1);
+							ImNodes::Ez::OutputSlots(node.inputs, 1);
+							ImGui::Text("%s", node.reducedVal.c_str());
 							ImNodes::Ez::EndNode();
 						}
-					}
 
-					ImNodes::Connection(&nodes[1], "In", &nodes[0], "Out");
-					ImNodes::Connection(&nodes[2], "In", &nodes[0], "Out");
+						for (const auto &child: node.id->get_children())
+						{
+							ImNodes::Connection(child, "In", node.id, "Out");
+							canvas.colors[4] = clear_color;
+						}
+
+					}
 
 					ImNodes::EndCanvas();
 				}
@@ -231,6 +220,11 @@ int main(int ac, char **av) {
 				static int counter = 0;
 				ImGui::Begin("Rules");
 				static bool HWstart = false;
+
+				for (; rows_count < start_rows_count; rows_count++)
+					inputExpressions.emplace_back(new char[100]);
+
+
 				if (!HWstart || rows_count)
 				{
 					HWstart = true;
@@ -294,18 +288,20 @@ int main(int ac, char **av) {
 
 					std::cout << "FILE:" << ss.str() << std::endl << std::endl;
 					try {
+
+						interpreter.reset();
 						interpreter.startFile(rulesFileName);
+						changeGraph = true;
 						lastError = "";
 					} catch (const std::exception &e) {
 						lastError = e.what();
 					}
 
-					interpreter.reset();
-
 
 				}
 
-				ImGui::Text((char*)lastError.c_str());
+
+				ImGui::Text("%s", lastError.c_str());
 
 
 //				ImGui::Checkbox("memory Window", &show_memory_window);
@@ -337,37 +333,6 @@ int main(int ac, char **av) {
 
 //				ImGui::Text("\nApplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-				ImGui::End();
-			}
-			{
-				ImGui::Begin("Values");
-				static bool SMstart = false;
-				if (!SMstart || value_count < FACT_COUNT)
-				{
-					SMstart = true;
-					windowSizeValues.x = 300;
-					windowSizeValues.y = (float)(30 + 40 * FACT_COUNT);
-					ImGui::SetWindowSize(windowSizeValues);
-				}
-				while (value_count < FACT_COUNT)
-				{
-					staticValueForFacts.push_back(2);
-					++value_count;
-				}
-				while (value_count > FACT_COUNT)
-				{
-					staticValueForFacts.pop_back();
-					--value_count;
-				}
-				for (int i = 0; i < value_count; i++){
-					char *cstr = new char[1 + 1];
-					cstr[0] = FACT_VECTOR[i][0];
-					cstr[1] = '\0';
-					addRadioButtonForVar(cstr, &staticValueForFacts[i]);
-					delete[] cstr;
-				}
-
-				//addRadioButtonForVar();
 				ImGui::End();
 			}
 

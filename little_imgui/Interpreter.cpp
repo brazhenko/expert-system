@@ -131,6 +131,7 @@ void Interpreter::reset()
 	expressions_.clear();
 	storage_.clear();
 	storage_changed_ = false;
+
 	repeatDestroyer_.clear();
 	repeatUsageCount_.clear();
 }

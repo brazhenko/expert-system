@@ -100,6 +100,7 @@ namespace expert_system {
 		virtual void evalAs(Value val, bool ask = false) = 0;
 		virtual std::string to_string() = 0;
 		virtual std::string to_reduced_string() = 0;
+		virtual std::vector<iExpertNode*> get_children() = 0;
 		virtual ~iExpertNode() = default;
 	};
 
@@ -115,6 +116,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~Implication() override;
 	};
 
@@ -130,6 +132,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~And() override;
 	};
 
@@ -145,6 +148,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~Or() override;
 	};
 
@@ -161,6 +165,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~Not() override;
 	};
 
@@ -176,6 +181,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~Xor() override;
 	};
 
@@ -191,6 +197,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~Equ() override;
 	};
 
@@ -209,6 +216,7 @@ namespace expert_system {
 		void evalAs(Value val, bool ask) override;
 		std::string to_string() override;
 		std::string to_reduced_string() override;
+		std::vector<iExpertNode*> get_children() override;
 		~Var() override;
 	};
 
