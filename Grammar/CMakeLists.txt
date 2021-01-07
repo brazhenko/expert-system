@@ -17,7 +17,7 @@ set(
 
 set(
 		LEXER_FILE
-		${CMAKE_CURRENT_SOURCE_DIR}/Lexer.flex
+        ${CMAKE_CURRENT_SOURCE_DIR}/Lexer.l
 )
 
 ### lex target ####

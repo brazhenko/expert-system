@@ -1,8 +1,10 @@
+#include "Interpreter.h"
+
+
 #include <iostream>
 
 
-int yyparse();
-extern FILE * yyin;
+
 
 
 #include "little_imgui/imgui.h"
@@ -43,9 +45,11 @@ static void glfw_error_callback(int error, const char* description)
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+Interpreter interpreter;
+
 int main(int ac, char **av) {
-	yyin = stdin;
-	yyparse();
+
+	interpreter.startInteractive();
 
 	bool gui = false;
 	if (gui)

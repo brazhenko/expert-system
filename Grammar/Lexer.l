@@ -2,7 +2,9 @@
 #include "../expertNode.h"
 #include "Parser.yy.hpp"
 #include <string>
-
+#include <string>
+#include <sstream>
+#include <iostream>
 
 
 %}
@@ -25,11 +27,15 @@
 "<=>"							{ return EQU; }
 "("								{ return BROPEN; }
 ")"								{ return BRCLOSE; }
+"="								{ return ASSIGN; }
+"?"                             { return QUERY; }
+"show"							{ return SHOW; }
+
 [A-Z]							{
 									yylval.sIndex = *yytext;
 									return VAR;
 								}
-
+.					        	throw std::runtime_error("Unexpected symbol");
 
 %%
 
