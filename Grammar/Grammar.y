@@ -24,9 +24,11 @@ bool assigned = false;
 
 void yyerror(const char *msg)
 {
-	std::cerr << msg  << " " << yylineno << std::endl;
 	printf("yychar: %d\n", yychar);
-	throw std::runtime_error("parse error");
+
+	std::stringstream ss;
+	ss << "parse error in line: " << yylineno;
+	throw std::runtime_error(ss.str());
 }
 
 
@@ -89,10 +91,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 //		std::cout << $$->to_string() << std::endl;
 	}
@@ -102,10 +110,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 		// std::cout << $$->to_string() << std::endl;
 	}
@@ -115,10 +129,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 //		std::cout << $$->to_string() << std::endl;
  	}
@@ -128,10 +148,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 //		std::cout << $$->to_string() << std::endl;
 	}
@@ -141,10 +167,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 //		std::cout << $$->to_string() << std::endl;
 	}
@@ -154,10 +186,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 //		std::cout << $$->to_string() << std::endl;
 	}
@@ -172,10 +210,16 @@ EXPR:
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
 			auto t = interpreter.repeatDestroyer_[$$->to_string()];
+			interpreter.repeatUsageCount_[$$->to_string()]++;
+
 			delete $$;
 			$$ = t;
 		}
-		interpreter.repeatDestroyer_[$$->to_string()] = $$;
+		else
+		{
+			interpreter.repeatDestroyer_[$$->to_string()] = $$;
+			interpreter.repeatUsageCount_[$$->to_string()] = 1;
+		}
 
 //		std::cout << $$->to_string() << std::endl;
 	}

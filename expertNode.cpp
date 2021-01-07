@@ -240,10 +240,15 @@ std::string expert_system::Or::to_reduced_string() {
 }
 
 expert_system::Or::~Or() {
-	if (interpreter.repeatDestroyer_[l_->to_string()] != l_)
+	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
 		delete l_;
-	if (interpreter.repeatDestroyer_[r_->to_string()] != r_)
+
+	interpreter.repeatUsageCount_[l_->to_string()]--;
+
+	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
 		delete r_;
+
+	interpreter.repeatUsageCount_[r_->to_string()]--;
 }
 
 ///
@@ -350,10 +355,15 @@ std::string expert_system::Implication::to_reduced_string() {
 }
 
 expert_system::Implication::~Implication() {
-	if (interpreter.repeatDestroyer_[l_->to_string()] != l_)
+	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
 		delete l_;
-	if (interpreter.repeatDestroyer_[r_->to_string()] != r_)
+
+	interpreter.repeatUsageCount_[l_->to_string()]--;
+
+	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
 		delete r_;
+
+	interpreter.repeatUsageCount_[r_->to_string()]--;
 }
 
 ///
@@ -460,10 +470,15 @@ std::string expert_system::And::to_reduced_string() {
 }
 
 expert_system::And::~And() {
-	if (interpreter.repeatDestroyer_[l_->to_string()] != l_)
+	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
 		delete l_;
-	if (interpreter.repeatDestroyer_[r_->to_string()] != r_)
+
+	interpreter.repeatUsageCount_[l_->to_string()]--;
+
+	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
 		delete r_;
+
+	interpreter.repeatUsageCount_[r_->to_string()]--;
 }
 
 ///
@@ -561,8 +576,10 @@ std::string expert_system::Not::to_reduced_string() {
 }
 
 expert_system::Not::~Not() {
-	if (interpreter.repeatDestroyer_[c_->to_string()] != c_)
+	if (interpreter.repeatUsageCount_[c_->to_string()] == 1)
 		delete c_;
+
+	interpreter.repeatUsageCount_[c_->to_string()]--;
 }
 
 ///
@@ -666,10 +683,15 @@ std::string expert_system::Xor::to_reduced_string() {
 }
 
 expert_system::Xor::~Xor() {
-	if (interpreter.repeatDestroyer_[l_->to_string()] != l_)
+	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
 		delete l_;
-	if (interpreter.repeatDestroyer_[r_->to_string()] != r_)
+
+	interpreter.repeatUsageCount_[l_->to_string()]--;
+
+	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
 		delete r_;
+
+	interpreter.repeatUsageCount_[r_->to_string()]--;
 }
 
 ///
@@ -704,9 +726,14 @@ std::string expert_system::Equ::to_reduced_string() {
 }
 
 expert_system::Equ::~Equ() {
-	if (interpreter.repeatDestroyer_[l_->to_string()] != l_)
+	if (interpreter.repeatUsageCount_[l_->to_string()] == 1)
 		delete l_;
-	if (interpreter.repeatDestroyer_[r_->to_string()] != r_)
+
+	interpreter.repeatUsageCount_[l_->to_string()]--;
+
+	if (interpreter.repeatUsageCount_[r_->to_string()] == 1)
 		delete r_;
+
+	interpreter.repeatUsageCount_[r_->to_string()]--;
 }
 

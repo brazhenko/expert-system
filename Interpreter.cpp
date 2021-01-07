@@ -39,13 +39,26 @@ void Interpreter::evalAllAsTrue()
 }
 
 int yyparse();
+extern FILE * yyin;
+
 void Interpreter::startInteractive()
 {
-	extern FILE * yyin;
-
 	yyin = stdin;
 	yyparse();
 }
+
+extern int yylex_destroy();
+void Interpreter::startFile(const std::string &filename)
+{
+
+	std::cout << "START" << std::endl;
+
+	yylex_destroy();
+
+	yyin = fopen(filename.c_str(),"r");
+	yyparse();
+}
+
 
 std::string Interpreter::trees_to_string() const {
 	std::stringstream ss;
@@ -105,6 +118,21 @@ bool Interpreter::storageChanged() const
 	storage_changed_ = false;
 
 	return ret;
+}
+
+void Interpreter::reset()
+{
+	for (auto &expr : this->expressions_)
+	{
+		delete expr;
+	}
+	fclose(yyin);
+
+	expressions_.clear();
+	storage_.clear();
+	storage_changed_ = false;
+	repeatDestroyer_.clear();
+	repeatUsageCount_.clear();
 }
 
 

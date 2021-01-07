@@ -35,7 +35,8 @@
 									yylval.sIndex = *yytext;
 									return VAR;
 								}
-.					        	throw std::runtime_error("Unexpected symbol");
+
+.					        	{YY_FLUSH_BUFFER;throw std::runtime_error("Unexpected symbol");}
 
 %%
 

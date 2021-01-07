@@ -22,7 +22,7 @@ class Interpreter {
 	mutable bool storage_changed_{false};
 public:
 	std::unordered_map<std::string, expert_system::iExpertNode*> repeatDestroyer_;
-
+	std::unordered_map<std::string, int> repeatUsageCount_;
 
 	expert_system::Value getValueByVarName(char vn) const;
 	bool isVarSet(char vn) const;
@@ -30,10 +30,12 @@ public:
 
 	void evalAllAsTrue();
 	void startInteractive();
+	void startFile(const std::string &filename);
 	void addExpression(expert_system::iExpertNode *expression);
 	void addQuery(char c);
 	void processAllQueries();
 	bool storageChanged() const;
+	void reset();
 
 	std::string trees_to_string() const;
 

@@ -86,11 +86,16 @@ public:
 
 int main(int ac, char **av) {
 
-	interpreter.startInteractive();
 
-	bool gui = false;
-	if (gui)
+
+	bool gui = true;
+	if (!gui)
 	{
+		interpreter.startInteractive();
+	}
+	else
+	{
+
 		// Setup window
 		glfwSetErrorCallback(glfw_error_callback);
 		if (!glfwInit())
@@ -105,7 +110,7 @@ int main(int ac, char **av) {
 
 
 		// Create window with graphics context
-		GLFWwindow* window = glfwCreateWindow(1280, 720, "expert-system", NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(720, 720, "expert-system", NULL, NULL);
 		if (window == nullptr)
 			return 1;
 		glfwMakeContextCurrent(window);
@@ -140,7 +145,9 @@ int main(int ac, char **av) {
 		// Our state
 		bool show_memory_window = false;
 		bool show_tiny_clusters = false, show_small_clusters = false, show_huge_clusters = false;
-
+		auto true_vars = std::shared_ptr<char>(new char[101]);
+		true_vars.get()[0] = '=';
+		std::string lastError;
 
 		int rows_count = 0;
 		int value_count = 0;
@@ -182,7 +189,7 @@ int main(int ac, char **av) {
 				{
 					HWstart = true;
 					windowSizeFormulas.x = 450;
-					windowSizeFormulas.y = (float)(80 + 23 * rows_count);
+					windowSizeFormulas.y = (float)(90 + 23 * rows_count);
 					ImGui::SetWindowSize(windowSizeFormulas);
 				}
 				// Config boxes
@@ -192,17 +199,20 @@ int main(int ac, char **av) {
 					ss << i + 1;
 					std::string num = ss.str();
 					std::string str = "##Rule " + num;
-					char *cstr = new char[str.length() + 1];
-					strcpy(cstr, str.c_str());
-					addString(cstr ,i, inputExpressions);
-					delete [] cstr;
+					addString((char*)str.c_str() ,i, inputExpressions);
 				}
+
+				ImGui::Text("Put True Facts");
+				ImGui::SameLine(120);
+				ImGui::InputText("##True Facts", true_vars.get() + 1, 100);
 
 				if(ImGui::Button ("PRESS TO ADD"))
 				{
 					rows_count++;
 					inputExpressions.emplace_back(new char[100]);
 				}
+
+
 				ImGui::SameLine(125);
 				if(ImGui::Button ("PRESS TO DELETE"))
 				{
@@ -213,16 +223,43 @@ int main(int ac, char **av) {
 						inputExpressions.pop_back();
 					}
 				}
+
 				ImGui::SameLine(270);
 				if(ImGui::Button ("SET RULES"))
 				{
+					std::stringstream  ss;
+
 					for (auto &el : inputExpressions)
 					{
 						std::cout << el <<std::endl;
+						ss << el << std::endl;
 					}
+					std::cout << true_vars.get() << std::endl;
+
+					ss <<  true_vars.get() << std::endl;
+					ss << "show" << std::endl;
+
+
+					std::string rulesFileName = "/tmp/expert_system";
+					std::ofstream myfile;
+					myfile.open (rulesFileName);
+					myfile << ss.str();
+					myfile.close();
+
+					std::cout << "FILE:" << ss.str() << std::endl << std::endl;
+					try {
+						interpreter.startFile(rulesFileName);
+						lastError = "";
+					} catch (const std::exception &e) {
+						lastError = e.what();
+					}
+
+					interpreter.reset();
+
+
 				}
 
-
+				ImGui::Text((char*)lastError.c_str());
 
 
 //				ImGui::Checkbox("memory Window", &show_memory_window);
