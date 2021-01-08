@@ -13,21 +13,28 @@
 #include <sstream>
 #include <iostream>
 
+extern FILE*	yyin;
 extern int	yylex();
 extern int	yylineno;
 extern char*	yytext;
 extern int	yychar;
 extern char*	yydebug;
 extern Interpreter interpreter;
-
+int yyparse();
 
 void yyerror(const char *msg)
 {
 	printf("yychar: %d\n", yychar);
 
-	std::stringstream ss;
-	ss << "parse error in line: " << yylineno;
-	throw std::runtime_error(ss.str());
+	if (yyin != stdin)
+	{
+		std::stringstream ss;
+		ss << "parse error in line: " << yylineno;
+		throw std::runtime_error(ss.str());
+	}
+
+	std::cerr << "parse error" << std::endl;
+	yyparse();
 }
 
 
@@ -52,6 +59,7 @@ void yyerror(const char *msg)
 %token SHOW
 %token RESET
 %token ASSIGN_FALSE
+%token UNKNOWN
 
 %union {
 	expert_system::iExpertNode* Node;
@@ -74,6 +82,7 @@ S:
 FULLEXPR:
 	EXPR NL
 	{
+		std::cout << "Here2" << std::endl;
 		interpreter.addExpression($1);
 	}
 
@@ -191,6 +200,7 @@ EXPR:
 	}
 	| VAR
 	{
+		std::cout << "HERE" << std::endl;
 		$$ = new expert_system::Var($1);
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
