@@ -37,9 +37,9 @@
 									return VAR;
 								}
 
-.+					        	{
-									return UNKNOWN;
+.					        	{
 									YY_FLUSH_BUFFER;
+									return UNKNOWN;
 									if (yyin != stdin)
 										throw std::runtime_error("Unexpected symbol");
 									else
