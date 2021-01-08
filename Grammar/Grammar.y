@@ -52,7 +52,6 @@ void yyerror(const char *msg)
 %nonassoc NOT
 %left BROPEN
 %left BRCLOSE
-//%token VAR
 
 %token ASSIGN
 %token QUERY
@@ -82,7 +81,6 @@ S:
 FULLEXPR:
 	EXPR NL
 	{
-		std::cout << "Here2" << std::endl;
 		interpreter.addExpression($1);
 	}
 
@@ -200,7 +198,6 @@ EXPR:
 	}
 	| VAR
 	{
-		std::cout << "HERE" << std::endl;
 		$$ = new expert_system::Var($1);
 		if (interpreter.repeatDestroyer_.find($$->to_string()) != interpreter.repeatDestroyer_.end())
 		{
@@ -234,10 +231,22 @@ OTHER:
 	}
 	| QUERY QUERY_VARS
 	{
+		do
+		{
+			interpreter.evalAllAsTrue();
+		}
+		while (interpreter.storageChanged());
+
 		interpreter.processAllQueries();
 	}
 	| SHOW
 	{
+		do
+		{
+			interpreter.evalAllAsTrue();
+		}
+		while (interpreter.storageChanged());
+
 		std::cout << interpreter.trees_to_string();
 	}
 	| RESET

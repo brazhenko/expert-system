@@ -63,7 +63,7 @@ SET(IMGUI_SOURCES
 
 add_executable(${PROJECT_NAME} main.cpp
 		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h little_imgui/Interpreter.cpp Interpreter.h
-		${IMGUI_SOURCES})
+		${IMGUI_SOURCES} gui.cpp)
 add_dependencies(${PROJECT_NAME}  Grammar)
 
 target_link_libraries(${PROJECT_NAME}
