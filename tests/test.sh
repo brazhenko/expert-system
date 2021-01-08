@@ -1,1 +1,4 @@
- ../cmake-build-debug/expert-system | A => B | A | ?B | cat show
+#!/bin/bash
+  echo "A => B\n
+  A\n
+  ?B" | cmake-build-debug/expert-system
