@@ -1,0 +1,1 @@
+ ../cmake-build-debug/expert-system | A => B | A | ?B | cat show
