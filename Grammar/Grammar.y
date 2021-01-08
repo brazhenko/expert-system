@@ -24,8 +24,6 @@ int yyparse();
 
 void yyerror(const char *msg)
 {
-	printf("yychar: %d\n", yychar);
-
 	if (yyin != stdin)
 	{
 		std::stringstream ss;
@@ -225,10 +223,6 @@ OTHER:
 		}
 		while (interpreter.storageChanged());
 	}
-	| ASSIGN_FALSE ASSIGN_FALSE_VARS
-	{
-		interpreter.evalAllAsTrue();
-	}
 	| QUERY QUERY_VARS
 	{
 		do
@@ -254,13 +248,6 @@ OTHER:
 		interpreter.reset();
 	}
 
-
-ASSIGN_FALSE_VARS:
-	| VAR ASSIGN_FALSE_VARS
-	{
-		interpreter.setVarWithValue(expert_system::Value::False, $1);
-	}
-	;
 
 ASSIGN_VARS:
 	| VAR ASSIGN_VARS

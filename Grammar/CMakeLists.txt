@@ -62,19 +62,16 @@ set(
 )
 
 
-set(SOURCES ${AVM_SOURCES}
+set(GRAMMAR_SOURCES
 		${CMAKE_CURRENT_BINARY_DIR}/Lexer.ll.cpp
 		${CMAKE_CURRENT_BINARY_DIR}/Parser.yy.cpp
-		PARENT_SCOPE)
-
-set(AVM_HEADERS ${AVM_HEADERS}
 		${CMAKE_CURRENT_SOURCE_DIR}/Lexer.h
 		${CMAKE_CURRENT_BINARY_DIR}/Parser.yy.hpp
 		PARENT_SCOPE)
 
 
 
-add_custom_target(Grammar DEPENDS ${AVM_PARSER_SOURCE_FILE} VERBATIM)
+add_custom_target(Grammar DEPENDS VERBATIM)
 
 add_dependencies(parser lexer)
 add_dependencies(Grammar parser)

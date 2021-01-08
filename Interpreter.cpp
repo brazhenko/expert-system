@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "../Interpreter.h"
+#include "Interpreter.h"
 #include <sstream>
 
 expert_system::Value Interpreter::getValueByVarName(char vn) const
@@ -53,6 +53,8 @@ void Interpreter::startFile(const std::string &filename)
 	yylex_destroy();
 
 	yyin = fopen(filename.c_str(),"r");
+	if (yyin == nullptr)
+		throw std::invalid_argument("Error with opening file");
 	yyparse();
 }
 

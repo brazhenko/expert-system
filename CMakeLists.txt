@@ -4,13 +4,6 @@ project(expert-system)
 set(CMAKE_CXX_STANDARD 20)
 
 include(Grammar/grammar.cmake)
-#
-
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
 
 # <IMGUI>
 find_package (
@@ -62,7 +55,8 @@ SET(IMGUI_SOURCES
 
 
 add_executable(${PROJECT_NAME} main.cpp
-		${CMAKE_CURRENT_BINARY_DIR}/Grammar/Lexer.ll.cpp ${CMAKE_CURRENT_BINARY_DIR}/Grammar/Parser.yy.cpp expertNode.cpp expertNode.h little_imgui/Interpreter.cpp Interpreter.h
+		${GRAMMAR_SOURCES}
+		expertNode.cpp expertNode.h Interpreter.cpp Interpreter.h
 		${IMGUI_SOURCES} gui.cpp)
 add_dependencies(${PROJECT_NAME}  Grammar)
 
