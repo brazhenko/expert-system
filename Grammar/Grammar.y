@@ -251,13 +251,6 @@ OTHER:
 	}
 
 
-ASSIGN_FALSE_VARS:
-	| VAR ASSIGN_FALSE_VARS
-	{
-		interpreter.setVarWithValue(expert_system::Value::False, $1);
-	}
-	;
-
 ASSIGN_VARS:
 	| VAR ASSIGN_VARS
 	{
