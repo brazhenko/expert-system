@@ -231,10 +231,22 @@ OTHER:
 	}
 	| QUERY QUERY_VARS
 	{
+		do
+		{
+			interpreter.evalAllAsTrue();
+		}
+		while (interpreter.storageChanged());
+
 		interpreter.processAllQueries();
 	}
 	| SHOW
 	{
+		do
+		{
+			interpreter.evalAllAsTrue();
+		}
+		while (interpreter.storageChanged());
+
 		std::cout << interpreter.trees_to_string();
 	}
 	| RESET
