@@ -13,10 +13,6 @@
 #include <string>
 
 namespace expert_system {
-
-	constexpr unsigned false_ = 0b0;
-	constexpr unsigned true_ = 0b1;
-
 	enum class Value
 	{
 		False = 0,
@@ -87,10 +83,6 @@ namespace expert_system {
 								   }
 			},
 	};
-
-	Value getValueByVarName(char name);
-
-	void setVarByValue(char name, Value value);
 
 	class iExpertNode {
 	protected:

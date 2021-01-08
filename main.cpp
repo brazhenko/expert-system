@@ -35,8 +35,6 @@ using namespace gl;
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include <iostream>
-#include <unistd.h>
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -45,7 +43,7 @@ static void glfw_error_callback(int error, const char* description)
 
 Interpreter interpreter;
 
-char *addString(char*name, int scoreString, std::vector<char*> &v) {
+void addString(char*name, int scoreString, std::vector<char*> &v) {
 
 	ImGui::Text("Put Rule %d", scoreString + 1);
 	ImGui::SameLine(120);
@@ -55,7 +53,7 @@ char *addString(char*name, int scoreString, std::vector<char*> &v) {
 const char ColorMarkerStart = '{';
 const char ColorMarkerEnd = '}';
 
-bool ProcessInlineHexColor( const char* start, const char* end, ImVec4& color )
+bool ProcessInlineHexColor(const char* start, const char* end, ImVec4& color)
 {
 	const int hexCount = ( int )( end - start );
 	if( hexCount == 6 || hexCount == 8 )
@@ -157,12 +155,6 @@ void TextWithColors( const char* fmt, ... )
 	}
 }
 
-enum Mode
-{
-	True,
-	False,
-	Undefined
-};
 
 enum class WorkMode
 {
@@ -237,8 +229,13 @@ int main(int ac, char **av) {
 
 		// Setup window
 		glfwSetErrorCallback(glfw_error_callback);
+
 		if (!glfwInit())
-			return 1;
+		{
+			std::cerr << "Error on init" << std::endl;
+			exit(1);
+		}
+
 
 		// GL 3.2 + GLSL 150
 		const char* glsl_version = "#version 150";
@@ -251,63 +248,57 @@ int main(int ac, char **av) {
 		// Create window with graphics context
 		GLFWwindow* window = glfwCreateWindow(900, 1000, "expert-system", NULL, NULL);
 		if (window == nullptr)
-			return 1;
+		{
+			std::cerr << "Error on creating window" << std::endl;
+			exit(1);
+		}
+
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1); // Enable vsync
+		// Enable vsync
+		glfwSwapInterval(1);
 
 		// Initialize OpenGL loader
-
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 		bool err = glewInit() != GLEW_OK;
-#endif
 		if (err)
 		{
-			fprintf(stderr, "Failed to initialize OpenGL loader!\n");
+				fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 			return 1;
 		}
+#endif
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImNodes::CanvasState canvas;
-//		imnodes::Initialize();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init(glsl_version);
 
-		// Our state
-		bool show_memory_window = false;
-		bool show_tiny_clusters = false, show_small_clusters = false, show_huge_clusters = false;
-		auto true_vars = std::shared_ptr<char>(new char[101]);
-		bool changeGraph = false;
-		true_vars.get()[0] = '=';
-		std::string lastError;
+		// Our state variable
 
+		auto true_vars = std::shared_ptr<char>(new char[101]);
+		true_vars.get()[0] = '=';
+
+		bool changeGraph = false;
+		std::string lastError;
 		int rows_count = 0;
 		const int start_rows_count = 3;
-		int value_count = 0;
 		std::vector<char*> inputExpressions;
-		std::vector<char*> Facts;
-		std::vector<int> staticValueForFacts;
 		ImVec2 windowSizeFormulas;
 
 
 
 		ImVec4 clear_color = ImVec4(1.f, 0.55f, 0.60f, 1.00f);
-		std::stringstream archive;
-
+		canvas.colors[4] = clear_color;
 
 
 		// Main loop
-
 		while (!glfwWindowShouldClose(window))
 		{
 			glfwPollEvents();
@@ -317,6 +308,7 @@ int main(int ac, char **av) {
 			ImGui::NewFrame();
 
 			{
+				// Facts window
 				if (ImGui::Begin("Facts", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 				{
 					for (char c = 'A'; c <= 'Z'; c++)
@@ -325,24 +317,18 @@ int main(int ac, char **av) {
 						ImGui::Text( "%c", c);
 						ImGui::SameLine( colPos );
 						if (interpreter.getValueByVarName(c) == expert_system::Value::True)
-						{
 							TextWithColors("{19a119}True");
-						}
 						else
-						{
 							TextWithColors("{ff3232}False");
-						}
 
 					}
 				}
 				ImGui::End();
-
 			}
 
 
 			{
-				// Graph
-
+				// Graph window
 				if (ImGui::Begin("Graph", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 				{
 					ImNodes::BeginCanvas(&canvas);
@@ -383,35 +369,24 @@ int main(int ac, char **av) {
 							ImGui::Text("%s", node.reducedVal.c_str());
 
 							if (node.id->eval() == expert_system::Value::True)
-							{
 								TextWithColors("{19a119}True");
-							}
 							else
-							{
 								TextWithColors("{ff3232}False");
-							}
-
 
 							ImNodes::Ez::EndNode();
 						}
 
 						for (const auto &child: node.id->get_children())
-						{
 							ImNodes::Connection(child, "In", node.id, "Out");
-							canvas.colors[4] = clear_color;
-						}
-
 					}
-
 					ImNodes::EndCanvas();
 				}
 				ImGui::End();
-
-
 			}
 
-			// service panel window
+
 			{
+				// Rules window
 				static float f = 0.0f;
 				static int counter = 0;
 				ImGui::Begin("Rules");
@@ -419,7 +394,6 @@ int main(int ac, char **av) {
 
 				for (; rows_count < start_rows_count; rows_count++)
 					inputExpressions.emplace_back(new char[100]);
-
 
 				if (!HWstart || rows_count)
 				{
@@ -429,7 +403,8 @@ int main(int ac, char **av) {
 					ImGui::SetWindowSize(windowSizeFormulas);
 				}
 
-				for (int i = 0; i < rows_count; i++){
+				for (int i = 0; i < rows_count; i++)
+				{
 					std::stringstream ss;
 					ss << i + 1;
 					std::string num = ss.str();
@@ -446,7 +421,6 @@ int main(int ac, char **av) {
 					rows_count++;
 					inputExpressions.emplace_back(new char[100]);
 				}
-
 
 				ImGui::SameLine(125);
 				if(ImGui::Button ("PRESS TO DELETE"))
@@ -494,9 +468,7 @@ int main(int ac, char **av) {
 					}
 				}
 
-
 				ImGui::Text("%s", lastError.c_str());
-
 				ImGui::End();
 			}
 
