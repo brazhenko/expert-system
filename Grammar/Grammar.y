@@ -24,8 +24,6 @@ int yyparse();
 
 void yyerror(const char *msg)
 {
-	printf("yychar: %d\n", yychar);
-
 	if (yyin != stdin)
 	{
 		std::stringstream ss;
