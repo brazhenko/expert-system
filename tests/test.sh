@@ -1,4 +1,5 @@
 #!/bin/bash
   echo "A => B\n
-  A\n
+  =A\n
   ?B" | cmake-build-debug/expert-system
+
