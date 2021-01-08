@@ -6,7 +6,6 @@
 #include <string>
 #include "Interpreter.h"
 #include <sstream>
-#include <iostream>
 
 extern Interpreter interpreter;
 using expert_system::Value;
@@ -343,7 +342,6 @@ void expert_system::Not::evalAs(Value val, bool ask)
 		}
 		catch (const std::exception &e) {
 			if (ask) throw;
-			/*std::cerr << "DEBUG: " << e.what() << std::endl; */
 		}
 	}
 

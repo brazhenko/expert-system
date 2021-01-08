@@ -225,10 +225,6 @@ OTHER:
 		}
 		while (interpreter.storageChanged());
 	}
-	| ASSIGN_FALSE ASSIGN_FALSE_VARS
-	{
-		interpreter.evalAllAsTrue();
-	}
 	| QUERY QUERY_VARS
 	{
 		do
