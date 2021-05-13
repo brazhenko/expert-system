@@ -18,8 +18,5 @@ cmake -DCMAKE_BUILD_TYPE="Release" .. && make -j 4
 
 ![example 1](screen1.png)
 
-![example 2](screen1.png)
-
-
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
