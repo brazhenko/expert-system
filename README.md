@@ -1,4 +1,6 @@
-# expert-system## Build
+# expert-system
+
+## Build
 
 ```bash
 # Build was tested only on MacOS, clang-1100.0.33.17
